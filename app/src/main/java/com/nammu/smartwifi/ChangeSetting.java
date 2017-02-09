@@ -19,6 +19,9 @@ public class ChangeSetting {
     public static void ChangeAudio(Context context, SeekBar sb_sound, final RadioGroup rg, final RadioButton mute, final RadioButton vibrate, final TextView stateView){
         final AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         sb_sound.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+
+
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
                 if(mute.isChecked() || vibrate.isChecked()){
