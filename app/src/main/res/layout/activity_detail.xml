@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_detail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.nammu.smartwifi.DetailActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:foregroundGravity="top"
+        android:layout_gravity="top">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <Switch
+                android:text="@string/detail_Wifi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/sw_wifi"
+                android:textSize="20dp"
+                android:layout_weight="1"
+                android:padding="10dp"
+                android:switchMinWidth="60dp"
+                android:checked="true"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/stroke" />
+
+            <Switch
+                android:text="@string/detail_Bluetooth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/sw_bluetooth"
+                android:textSize="20dp"
+                android:layout_weight="1"
+                android:padding="10dp"
+                android:switchMinWidth="60dp"
+                android:checked="false"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/stroke" />
+            <Switch
+                android:text="@string/detail_Sound"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/sw_sound"
+                android:textSize="20dp"
+                android:layout_weight="1"
+                android:padding="10dp"
+                android:switchMinWidth="60dp"
+                android:checked="false"/>
+
+            <LinearLayout
+                android:id="@+id/linear_sound"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                android:background="@drawable/clickborder"
+                android:layout_margin="10dp"
+                android:padding="15dp">
+
+                <TextView
+                    android:text="상태"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tv_sound_state_value"
+                    android:textSize="15dp"
+                    android:gravity="center"
+                    android:padding="5dp" />
+
+                <SeekBar
+                    android:id="@+id/sb_sound"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp" />
+
+                <RadioGroup
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:id="@+id/rbGroup">
+
+                    <RadioButton
+                        android:id="@+id/rb_sound_vibrate"
+                        android:text="@string/detail_Sound_Vibrate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" />
+
+                    <RadioButton
+                        android:id="@+id/rb_sound_mute"
+                        android:text="@string/detail_Sound_Mute"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center|start"
+                        android:layout_gravity="center" />
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/stroke"
+                android:layout_weight="1" />
+
+            <Switch
+                android:text="@string/detail_Bright"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/sw_bright"
+                android:textSize="20dp"
+                android:layout_weight="1"
+                android:padding="10dp"
+                android:switchMinWidth="60dp"
+                android:checked="false"/>
+
+            <LinearLayout
+                android:id="@+id/linear_bright"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                android:orientation="vertical"
+                android:padding="15dp"
+                android:background="@drawable/clickborder"
+                android:layout_margin="10dp">
+                <TextView
+                    android:text="상태"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tv_bright_state_value"
+                    android:textSize="15dp"
+                    android:gravity="center"
+                    android:padding="5dp" />
+                <SeekBar
+                    android:id="@+id/sb_bright"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="250"
+                    android:padding="5dp" />
+            </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/stroke" />
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/White"
+        android:layout_gravity="bottom"
+        android:paddingRight="1dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/click_back"
+            android:layout_weight="1"
+            android:layout_gravity="bottom"
+            android:gravity="bottom|center"
+            android:textSize="20dp"
+            android:background="@drawable/shape_button"
+            android:padding="5dp"
+            android:textColor="@color/White"
+            android:layout_marginRight="1dp"
+            android:id="@+id/btn_detail_back" />N
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/click_ok"
+            android:layout_weight="1"
+            android:layout_gravity="bottom"
+            android:gravity="bottom|center"
+            android:textSize="20dp"
+            android:background="@drawable/shape_button"
+            android:padding="5dp"
+            android:textColor="@color/White"
+            android:layout_marginLeft="1dp"
+            android:id="@+id/btn_detail_Success" />
+    </LinearLayout>
+
+</FrameLayout>
