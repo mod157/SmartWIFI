@@ -1,4 +1,4 @@
-package com.nammu.smartwifi;
+package com.nammu.smartwifi.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +8,13 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
+import com.nammu.smartwifi.R;
+import com.nammu.smartwifi.classdata.ItemAdapter;
+import com.nammu.smartwifi.classdata.WifiItem;
+import com.nammu.smartwifi.realmdb.RealmDB;
+import com.nammu.smartwifi.realmdb.WifiData;
+import com.nammu.smartwifi.realmdb.WifiData_State;
 
 import java.util.ArrayList;
 
@@ -28,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     @OnClick(R.id.fab)
     public void fabClick(View view){
         //리스트 보여주는 형태
-        Intent intent = new Intent(MainActivity.this, AddActivity.class);
+        Intent intent = new Intent(MainActivity.this, SetActivity.class);
         startActivity(intent);
     }
 
@@ -40,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
         ListView();
     }
+
     public void testPrint(){
         Realm realm2 = RealmDB.RealmInit(this);
         RealmResults<WifiData> itemResult = realm2.where(WifiData.class).findAll();

@@ -1,4 +1,4 @@
-package com.nammu.smartwifi;
+package com.nammu.smartwifi.activity;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
@@ -17,6 +17,10 @@ import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import com.nammu.smartwifi.R;
+import com.nammu.smartwifi.classdata.ChangeSetting;
+import com.nammu.smartwifi.realmdb.RealmDB;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

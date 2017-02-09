@@ -1,4 +1,4 @@
-package com.nammu.smartwifi;
+package com.nammu.smartwifi.classdata;
 
 /**
  * Created by SunJae on 2017-02-08.
@@ -10,7 +10,7 @@ public class WifiItem {
     private String wifi_BSSID;
     private boolean wifi_state;
 
-    WifiItem(String name, String ssid, String bssid, boolean isState){
+    public WifiItem(String name, String ssid, String bssid, boolean isState){
         wifi_Name = name;
         wifi_SSID = ssid;
         wifi_BSSID = bssid;

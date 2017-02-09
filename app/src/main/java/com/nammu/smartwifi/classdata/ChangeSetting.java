@@ -1,4 +1,4 @@
-package com.nammu.smartwifi;
+package com.nammu.smartwifi.classdata;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -11,6 +11,8 @@ import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.nammu.smartwifi.R;
+
 /**
  * Created by SunJae on 2017-02-09.
  */
@@ -19,8 +21,6 @@ public class ChangeSetting {
     public static void ChangeAudio(Context context, SeekBar sb_sound, final RadioGroup rg, final RadioButton mute, final RadioButton vibrate, final TextView stateView){
         final AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         sb_sound.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
-
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {

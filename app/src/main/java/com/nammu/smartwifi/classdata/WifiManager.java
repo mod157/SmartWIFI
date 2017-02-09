@@ -1,4 +1,4 @@
-package com.nammu.smartwifi;
+package com.nammu.smartwifi.classdata;
 
 /**
  * Created by SunJae on 2017-02-08.

@@ -1,4 +1,4 @@
-package com.nammu.smartwifi;
+package com.nammu.smartwifi.realmdb;
 
 import android.content.Context;
 

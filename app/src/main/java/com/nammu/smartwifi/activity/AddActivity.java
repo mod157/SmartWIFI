@@ -1,4 +1,4 @@
-package com.nammu.smartwifi;
+package com.nammu.smartwifi.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,8 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.nammu.smartwifi.R;
 
 import java.util.Random;
 
@@ -29,7 +31,6 @@ public class AddActivity extends AppCompatActivity {
     public void wifiSelect(View view){
         //주변 리스트와 저장된 wifi 리스트를 보여줘서 선택할 수 있게 설정
         //RecyclerView 하나를 더 생성 해야할 듯\
-
         tv_add_WifiName.setText("Ok");
     }
 

@@ -1,4 +1,4 @@
-package com.nammu.smartwifi;
+package com.nammu.smartwifi.classdata;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import com.nammu.smartwifi.R;
 
 import java.util.ArrayList;
 
@@ -24,7 +26,7 @@ public class ItemAdapter  extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
     int layout;
     Context context;
 
-    ItemAdapter(ArrayList<WifiItem> list, int layout, Context context){
+    public ItemAdapter(ArrayList<WifiItem> list, int layout, Context context){
         itemList = list;
         this.layout = layout;
         this.context = context;
