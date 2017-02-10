@@ -1,11 +1,10 @@
-package com.nammu.smartwifi.Fragment;
+package com.nammu.smartwifi.fragment;
 
 import android.bluetooth.BluetoothAdapter;
-import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,10 +18,9 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.nammu.smartwifi.R;
-import com.nammu.smartwifi.activity.DetailActivity;
 import com.nammu.smartwifi.activity.MainActivity;
-import com.nammu.smartwifi.classdata.ChangeSetting;
 import com.nammu.smartwifi.realmdb.RealmDB;
+import com.nammu.smartwifi.realmdb.WifiData;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,15 +31,7 @@ import butterknife.OnClick;
  * Created by SunJae on 2017-02-09.
  */
 
-public class DetailSetFragment extends Fragment {
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
-        View view = inflater.inflate( R.layout.fragment_set, container, false );
-        ButterKnife.bind(view);
-        return view;
-    }
-
+public class DetailSetFragment extends Fragment  {
     private String TAG = "##### SmartWIFI detail";
     private final int WIFI_STATE = 0;
     private final int BLUETOOTH_STATE = 1;
@@ -49,6 +39,7 @@ public class DetailSetFragment extends Fragment {
     private final int BRIGHT_STATE = 3;
     private boolean vibrate = false;
     private boolean[] setting_state = new boolean[4];
+    private WifiData data;
     private AudioManager audioManager;
     private int init_sound;
     private int init_bright;
@@ -106,15 +97,13 @@ public class DetailSetFragment extends Fragment {
         Log.e(TAG, "setting value : "  + setting_state.toString());
     }
 
-
     @OnClick(R.id.btn_detail_Success)
     public void SuccessClick(View view){
         //WifiData Set
-      /*  Intent getDataIntent = getIntent();
-        String name = getDataIntent.getStringExtra("View_name");
-        String ssid = getDataIntent.getStringExtra("View_ssid");
-        String bssid = getDataIntent.getStringExtra("View_bssid");
-        int pripority = getDataIntent.getIntExtra("View_Priority", 0);
+        String name = data.getName();
+        String ssid = data.getSSID();
+        String bssid = data.getBSSID();
+        int pripority = data.getPripority();
 
         //WifiData_state Data
         int sound_size = 0;
@@ -132,18 +121,34 @@ public class DetailSetFragment extends Fragment {
         }
 
         //context, name, ssid. bssid. pripority, isPlay
-        RealmDB.InsertOrUpdate_Data(this, name, ssid, bssid, pripority);
+        RealmDB.InsertOrUpdate_Data(getContext(), name, ssid, bssid, pripority);
         //context, bssid, wifi_state, bluetooth_state, sound_state, sound_size, Bright_state, bright_size
-        RealmDB.insertOrUpdate_Data_State(this, bssid, setting_state[WIFI_STATE], setting_state[BLUETOOTH_STATE],
+        RealmDB.insertOrUpdate_Data_State(getContext(), bssid, setting_state[WIFI_STATE], setting_state[BLUETOOTH_STATE],
                 setting_state[SOUND_STATE], sound_size, setting_state[BRIGHT_STATE], bright_size);
-        Intent intent = new Intent(DetailActivity.this, MainActivity.class);
+        Intent intent = new Intent(getContext(), MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        startActivity(intent);*/
+        startActivity(intent);
     }
 
-    @OnClick(R.id.btn_detail_back)
-    public void backClick(View view){
-      //  finish();
+    public static Fragment newInstance(WifiData data){
+        Fragment fragment = new DetailSetFragment();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("WifiData_Bundle",data);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
+        View view = inflater.inflate( R.layout.fragment_detail, container, false );
+        ButterKnife.bind(this, view);
+        Log.e(TAG,"Crete OK");
+        Bundle bundle = getArguments();
+        if(bundle != null) {
+            Log.e(TAG, "Bundler get Parcelable");
+            data = bundle.getParcelable("WifiData_Bundle");
+        }
+        return view;
     }
 
 
@@ -180,5 +185,4 @@ public class DetailSetFragment extends Fragment {
         //ChangeSetting.ChangeAudio(getApplicationContext(), sb_sound, rbGroup, rb_sound_vibrate, rb_sound_mute, tv_sound_state_value);
        // ChangeSetting.ChangeBright(this.getContentResolver(), getWindow(), sb_bright, tv_bright_state_value);
     }
-
 }

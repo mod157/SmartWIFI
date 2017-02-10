@@ -8,19 +8,49 @@
     android:layout_height="match_parent"
     tools:context="com.nammu.smartwifi.activity.MainActivity">
 
-    <android.support.v7.widget.RecyclerView
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/Rec_WifiList"
-        android:padding="10dp">
+        android:layout_height="match_parent">
 
-    </android.support.v7.widget.RecyclerView>
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/toolbar_draw" >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:textSize="20dp"
+                android:textColor="@color/Black"
+                android:text="@string/title_activity_main"
+                android:id="@+id/tv_add_toolbar" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                app:srcCompat="@drawable/cogwheel_1"
+                android:drawingCacheQuality="auto"
+                android:layout_gravity="right"
+                android:id="@+id/iv_toolbar"
+                android:layout_marginRight="10dp"/>
+        </android.support.v7.widget.Toolbar>
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/Rec_WifiList"
+            android:padding="10dp">
+
+        </android.support.v7.widget.RecyclerView>
+
+    </LinearLayout>
 
     <com.melnykov.fab.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center"
+        android:layout_gravity="bottom|right"
         android:layout_margin="16dp"
         android:src="@drawable/switch_custom_image"
         android:scaleType="fitCenter"
