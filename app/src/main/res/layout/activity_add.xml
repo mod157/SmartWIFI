@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <TextView
+        android:text="@string/add_Name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/Black"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="20dp"
+        android:textSize="20dp" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/et_add_name"
+        android:textColor="@color/Black"
+        android:textSize="15dp"
+        android:padding="15dp" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/stroke" />
+    <TextView
+        android:text="@string/add_Wifiname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/Black"
+        android:padding="10dp"
+        android:textSize="20dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_add_WifiSelectName"
+        android:textSize="20dp"
+        android:textColor="@color/Black"
+        android:hint="클릭하시면 리스트를 보실 수 있습니다."
+        android:padding="15dp" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/stroke" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/add_Priority"
+        android:textColor="@color/Black"
+        android:padding="10dp"
+        android:textSize="20dp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/add_pri_low"
+            android:layout_weight="3"
+            android:gravity="right"
+            />
+
+        <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="5"
+            android:progress="5"
+            android:id="@+id/sb_add_Priority" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/add_pri_high"
+            android:layout_weight="3"
+            android:gravity="left"/>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/stroke"
+        android:id="@+id/textView4" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="bottom"
+        android:background="@color/White">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/click_back"
+            android:layout_weight="1"
+            android:layout_gravity="bottom"
+            android:gravity="bottom|center"
+            android:textSize="20dp"
+            android:background="@drawable/shape_button"
+            android:padding="5dp"
+            android:textColor="@color/White"
+            android:layout_marginRight="1dp"
+            android:id="@+id/btn_add_back" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/click_next"
+            android:layout_weight="1"
+            android:layout_gravity="bottom"
+            android:gravity="bottom|center"
+            android:textSize="20dp"
+            android:background="@drawable/shape_button"
+            android:padding="5dp"
+            android:textColor="@color/White"
+            android:layout_marginLeft="1dp"
+            android:id="@+id/btn_add_next" />
+    </LinearLayout>
+</FrameLayout>
