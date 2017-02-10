@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.nammu.smartwifi.activity.DetailActivity">
+    tools:context="com.nammu.smartwifi.activity.DetailActivity"
+    android:background="@color/backgray">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:foregroundGravity="top"
-        android:layout_gravity="top">
+        android:layout_gravity="top"
+        android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -154,45 +156,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/stroke" />
+
+            <View
+                android:text="TextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                 android:layout_weight="1"/>
         </LinearLayout>
 
     </ScrollView>
 
-    <LinearLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@color/White"
+        android:text="@string/click_ok"
         android:layout_gravity="bottom"
-        android:paddingRight="1dp">
+        android:gravity="bottom|center"
+        android:textSize="20dp"
+        android:background="@drawable/shape_button"
+        android:textColor="@color/White"
+        android:id="@+id/btn_detail_Success"
+        android:padding="10dp"
+        android:layout_margin="10dp" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/click_back"
-            android:layout_weight="1"
-            android:layout_gravity="bottom"
-            android:gravity="bottom|center"
-            android:textSize="20dp"
-            android:background="@drawable/shape_button"
-            android:padding="5dp"
-            android:textColor="@color/White"
-            android:layout_marginRight="1dp"
-            android:id="@+id/btn_detail_back" />N
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/click_ok"
-            android:layout_weight="1"
-            android:layout_gravity="bottom"
-            android:gravity="bottom|center"
-            android:textSize="20dp"
-            android:background="@drawable/shape_button"
-            android:padding="5dp"
-            android:textColor="@color/White"
-            android:layout_marginLeft="1dp"
-            android:id="@+id/btn_detail_Success" />
-    </LinearLayout>
-
-</FrameLayout>
+</LinearLayout>

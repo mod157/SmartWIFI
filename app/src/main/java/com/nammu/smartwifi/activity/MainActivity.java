@@ -5,12 +5,13 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.nammu.smartwifi.R;
-import com.nammu.smartwifi.classdata.ItemAdapter;
+import com.nammu.smartwifi.adapter.ItemAdapter;
 import com.nammu.smartwifi.classdata.WifiItem;
 import com.nammu.smartwifi.realmdb.RealmDB;
 import com.nammu.smartwifi.realmdb.WifiData;
@@ -44,6 +45,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
         ListView();
     }

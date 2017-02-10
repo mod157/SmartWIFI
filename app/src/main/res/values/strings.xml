@@ -20,9 +20,7 @@
 
 
     <!--Button -->
-    <string name="click_next">다음</string>
-    <string name="click_back">이전</string>
-    <string name="click_ok">완료</string>
+    <string name="click_ok">확인</string>
 
     <!--menu-->
     <string name="menu_detail_CurrentStatus">현재 상태</string>

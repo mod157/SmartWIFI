@@ -1,4 +1,4 @@
-package com.nammu.smartwifi.classdata;
+package com.nammu.smartwifi.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +10,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.nammu.smartwifi.R;
+import com.nammu.smartwifi.classdata.WifiItem;
 
 import java.util.ArrayList;
 
@@ -21,7 +22,7 @@ import butterknife.OnCheckedChanged;
  * Created by SunJae on 2017-02-06.
  */
 
-public class ItemAdapter  extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
+public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
     ArrayList<WifiItem> itemList;
     int layout;
     Context context;
