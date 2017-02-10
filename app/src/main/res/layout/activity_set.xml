@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     tools:context="com.nammu.smartwifi.activity.SetActivity">
     <fragment
+        android:id="@+id/fragment_set"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="com.nammu.smartwifi.Fragment.SetFragment" />
+       android:name="com.nammu.smartwifi.Fragment.SetFragment" />
 </FrameLayout>
