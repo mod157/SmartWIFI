@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import com.nammu.smartwifi.R;
 import com.nammu.smartwifi.adapter.ItemAdapter;
-import com.nammu.smartwifi.classdata.WifiItem;
 import com.nammu.smartwifi.realmdb.RealmDB;
 import com.nammu.smartwifi.realmdb.WifiData;
 import com.nammu.smartwifi.realmdb.WifiData_State;
@@ -26,17 +25,18 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity {
-    private String TAG = "##### SmartWIFI";
+    private String TAG = "##### SmartWIFI MAIN";
+    public static boolean VIEW_EDIT = false;
+    private ArrayList<WifiData> itemList = new ArrayList<>();
+    private long backKeyTime = 0;
     @BindView(R.id.Rec_WifiList)
     RecyclerView recyclerView;
-    private ArrayList<WifiItem> itemList = new ArrayList<>();
-    private Realm realm;
-    private long backKeyTime=0;
 
     @OnClick(R.id.fab)
     public void fabClick(View view){
         //리스트 보여주는 형태
         Intent intent = new Intent(MainActivity.this, SetActivity.class);
+        VIEW_EDIT = false;
         startActivity(intent);
     }
 
@@ -52,24 +52,21 @@ public class MainActivity extends AppCompatActivity {
         ListView();
     }
 
+    //TODO 삭제
     public void testPrint(){
         Realm realm2 = RealmDB.RealmInit(this);
         RealmResults<WifiData> itemResult = realm2.where(WifiData.class).findAll();
         RealmResults<WifiData_State> itemResult2 = realm2.where(WifiData_State.class).findAll();
         Log.e(TAG, "List : " + itemResult.toString()+"\n"+itemResult2.toString());
     }
+
     private void ListView(){
         testPrint();
-        realm = RealmDB.RealmInit(this);
+        Realm realm = RealmDB.RealmInit(this);
         RealmResults<WifiData> itemResult = realm.where(WifiData.class).findAll();
         for(int i = 0; i<itemResult.size(); i++){
             WifiData itemData = itemResult.get(i);
-            String name = itemData.getName();
-            String ssid = itemData.getSSID();
-            String bssid = itemData.getBSSID();
-            boolean isPlay = itemData.getisPlay();
-            WifiItem item = new WifiItem(name,ssid,bssid,isPlay);
-            itemList.add(item);
+            itemList.add(itemData);
         }
         ItemAdapter adapter = new ItemAdapter(itemList, R.layout.recycler_item_layout,this);
         recyclerView.setAdapter(adapter);

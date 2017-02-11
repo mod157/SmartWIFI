@@ -1,6 +1,7 @@
 package com.nammu.smartwifi.realmdb;
 
 import android.content.Context;
+import android.util.Log;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -18,6 +19,19 @@ public class RealmDB {
         Realm.setDefaultConfiguration(realmConfiguration);
         realm = Realm.getDefaultInstance();
         return realm;
+    }
+
+    public static void InsertOrUpdate_Data(Context context, final WifiData data, final boolean isCheck){
+        Realm realm = RealmInit(context);
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                data.setisPlay(isCheck);
+                realm.copyToRealmOrUpdate(data);
+                Log.e("##### Change isPlay", isCheck+"");
+            }
+        });
+        realm.close();
     }
 
     public static void InsertOrUpdate_Data(Context context, String name, String ssid, String bssid, int pripority){

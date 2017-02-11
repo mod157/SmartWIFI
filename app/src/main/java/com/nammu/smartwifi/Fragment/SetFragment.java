@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nammu.smartwifi.R;
+import com.nammu.smartwifi.activity.MainActivity;
 import com.nammu.smartwifi.realmdb.WifiData;
 
 import butterknife.BindView;
@@ -50,7 +49,7 @@ public class SetFragment extends Fragment {
     public void SetButtonClick(View view){
         Log.e(TAG,"Button Click");
         if(isChecking()) {
-            mCallback.onChangeFragment();
+            mCallback.onChangeFragment(data);
         }
     }
 
@@ -65,24 +64,21 @@ public class SetFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
         View view = inflater.inflate( R.layout.fragment_set, container, false);
+        Log.e(TAG, "CreateView");
         set_Context = view.getContext();
         ButterKnife.bind(this, view);
         //Activity로 부터 전달
-        Bundle bundle = getArguments();
-        if(bundle != null) {
-            Log.e(TAG, "Bundler get Parcelable");
-            data = bundle.getParcelable("WifiData_Bundle");
+        if(MainActivity.VIEW_EDIT) {
+            Bundle bundle = getArguments();
+            if (bundle != null) {
+                Log.e(TAG, "Bundler get Parcelable");
+                data = bundle.getParcelable("WifiData_Bundle");
+                Log.e(TAG,data.getName() + data.getSSID());
+                tv_add_WifiName.setText(data.getSSID());
+                et_add_name.setText(data.getName());
+            }
         }
-        ToolbarSet(view);
         return view;
-    }
-
-    private void ToolbarSet(View view){
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.set_toolbar);
-        toolbar.setTitle(getString(R.string.title_activity_add));
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
-        activity.setSupportActionBar(toolbar);
-        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private boolean isChecking(){
@@ -106,13 +102,19 @@ public class SetFragment extends Fragment {
         //# wifi데이터
         data.setSSID(tv_add_WifiName.getText().toString());
         data.setBSSID("01010");
-
         data.setPripority(sb_add_Priority.getProgress());
     }
 
     // Fragment를 담고 있는 Activity는 이 interface를 구현해야 한다.
     public interface OnChangedListener {
-        public void onChangeFragment();
+        public void onChangeFragment(WifiData data);
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        Log.e(TAG,"destroy");
+
     }
 
     @Override

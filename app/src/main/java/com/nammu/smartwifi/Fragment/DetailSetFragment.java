@@ -1,15 +1,12 @@
 package com.nammu.smartwifi.fragment;
 
 import android.bluetooth.BluetoothAdapter;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,8 +16,6 @@ import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -50,9 +45,6 @@ public class DetailSetFragment extends Fragment  {
     private boolean[] setting_state = new boolean[4];
     private WifiData data;
     private AudioManager audioManager;
-    private int init_sound;
-    private int init_bright;
-    private int init_music_Sound;
     private int init_system_Sound;
     private Context detail_Context;
     @BindView(R.id.linear_sound)
@@ -157,21 +149,12 @@ public class DetailSetFragment extends Fragment  {
             Log.e(TAG, "Bundler get Parcelable");
             data = bundle.getParcelable("WifiData_Bundle");
         }
-        ToolbarSet(view);
         SetCurrentStatus();
         return view;
-    }
-    private void ToolbarSet(View view){
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.set_toolbar);
-        toolbar.setTitle(getString(R.string.title_activity_add));
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
-        activity.setSupportActionBar(toolbar);
-        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void  SetCurrentStatus() {
         audioManager = (AudioManager) detail_Context.getSystemService(Context.AUDIO_SERVICE);
-        init_music_Sound = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         init_system_Sound = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
         BluetoothAdapter blueAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -216,7 +199,7 @@ public class DetailSetFragment extends Fragment  {
                     cb_sound_vibrate.setChecked(false);
                     audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
                 }
-                // audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, AudioManager.FLAG_PLAY_SOUND);
+                //TODO 변경 될 때마다 소리 알람
                 audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, progress, AudioManager.FLAG_PLAY_SOUND);
                 tv_sound_state_value.setText(progress+"");
             }
@@ -234,7 +217,6 @@ public class DetailSetFragment extends Fragment  {
                 tv_sound_state_value.setText("진동");
             }
         });
-        //# 뮤직에 대해서도 설정
     }
 
     public void ChangeBright(){
@@ -258,7 +240,7 @@ public class DetailSetFragment extends Fragment  {
                 }
                 tv_bright_state_value.setText(progress+"");
 
-                //# 객체화
+                //TODO 객체화
                 WindowManager.LayoutParams parms =  window.getAttributes();
                 parms.screenBrightness = (float) progress / 250;
                 parms.flags |= WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
@@ -279,6 +261,5 @@ public class DetailSetFragment extends Fragment  {
     public void onDestroy(){
         super.onDestroy();
         audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, init_system_Sound, AudioManager.FLAG_PLAY_SOUND);
-        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, init_music_Sound, AudioManager.FLAG_PLAY_SOUND);
     }
 }
