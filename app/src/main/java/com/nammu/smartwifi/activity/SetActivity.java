@@ -19,10 +19,6 @@ public class SetActivity extends AppCompatActivity implements SetFragment.OnChan
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set);
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
-        toolbar.setTitle(getString(R.string.title_activity_add));
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         wifiData = new WifiData();
         if (savedInstanceState == null) {

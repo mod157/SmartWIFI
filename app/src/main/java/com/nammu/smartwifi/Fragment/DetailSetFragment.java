@@ -1,14 +1,22 @@
 package com.nammu.smartwifi.fragment;
 
 import android.bluetooth.BluetoothAdapter;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -31,6 +39,7 @@ import butterknife.OnClick;
  * Created by SunJae on 2017-02-09.
  */
 
+
 public class DetailSetFragment extends Fragment  {
     private String TAG = "##### SmartWIFI detail";
     private final int WIFI_STATE = 0;
@@ -43,7 +52,9 @@ public class DetailSetFragment extends Fragment  {
     private AudioManager audioManager;
     private int init_sound;
     private int init_bright;
-
+    private int init_music_Sound;
+    private int init_system_Sound;
+    private Context detail_Context;
     @BindView(R.id.linear_sound)
     LinearLayout linear_sound;
     @BindView(R.id.linear_bright)
@@ -64,12 +75,9 @@ public class DetailSetFragment extends Fragment  {
     SeekBar sb_sound;
     @BindView(R.id.sb_bright)
     SeekBar sb_bright;
-    @BindView(R.id.rb_sound_mute)
-    RadioButton rb_sound_mute;
-    @BindView(R.id.rb_sound_vibrate)
-    RadioButton rb_sound_vibrate;
-    @BindView(R.id.rbGroup)
-    RadioGroup rbGroup;
+    @BindView(R.id.cb_sound_vibrate)
+    CheckBox cb_sound_vibrate;
+
     @OnCheckedChanged({R.id.sw_bluetooth, R.id.sw_bright, R.id.sw_sound, R.id.sw_wifi})
     public void checkedChange(CompoundButton compoundButton, boolean isCheck){
         switch(compoundButton.getId()){
@@ -142,18 +150,31 @@ public class DetailSetFragment extends Fragment  {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
         View view = inflater.inflate( R.layout.fragment_detail, container, false );
         ButterKnife.bind(this, view);
+        detail_Context = view.getContext();
         Log.e(TAG,"Crete OK");
         Bundle bundle = getArguments();
         if(bundle != null) {
             Log.e(TAG, "Bundler get Parcelable");
             data = bundle.getParcelable("WifiData_Bundle");
         }
+        ToolbarSet(view);
+        SetCurrentStatus();
         return view;
     }
-
+    private void ToolbarSet(View view){
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.set_toolbar);
+        toolbar.setTitle(getString(R.string.title_activity_add));
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.setSupportActionBar(toolbar);
+        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
 
     private void  SetCurrentStatus() {
+        audioManager = (AudioManager) detail_Context.getSystemService(Context.AUDIO_SERVICE);
+        init_music_Sound = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        init_system_Sound = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
         BluetoothAdapter blueAdapter = BluetoothAdapter.getDefaultAdapter();
+
         if (blueAdapter == null) {
             sw_bluetooth.setChecked(false);
         } else {
@@ -170,19 +191,94 @@ public class DetailSetFragment extends Fragment  {
                 //# string으로 변경
                 tv_sound_state_value.setText("무음");
                 sb_sound.setProgress(0);
-                rb_sound_mute.setChecked(true);
+                cb_sound_vibrate.setChecked(false);
                 break;
             //진동
             case AudioManager.RINGER_MODE_VIBRATE:
                 tv_sound_state_value.setText("진동");
                 sb_sound.setProgress(0);
-                rb_sound_vibrate.setChecked(true);
+                cb_sound_vibrate.setChecked(true);
                 break;
             case  AudioManager.RINGER_MODE_NORMAL:
                 tv_sound_state_value.setText(audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM)+"");
+                cb_sound_vibrate.setChecked(false);
                 break;
         }
-        //ChangeSetting.ChangeAudio(getApplicationContext(), sb_sound, rbGroup, rb_sound_vibrate, rb_sound_mute, tv_sound_state_value);
-       // ChangeSetting.ChangeBright(this.getContentResolver(), getWindow(), sb_bright, tv_bright_state_value);
+        ChangeAudio();
+        ChangeBright();
+    }
+
+    public void ChangeAudio(){
+        sb_sound.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
+                if(cb_sound_vibrate.isChecked()){
+                    cb_sound_vibrate.setChecked(false);
+                    audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                }
+                // audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, AudioManager.FLAG_PLAY_SOUND);
+                audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, progress, AudioManager.FLAG_PLAY_SOUND);
+                tv_sound_state_value.setText(progress+"");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+        cb_sound_vibrate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                audioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+                tv_sound_state_value.setText("진동");
+            }
+        });
+        //# 뮤직에 대해서도 설정
+    }
+
+    public void ChangeBright(){
+        try {
+            if(Settings.System.getInt(detail_Context.getContentResolver(),Settings.System.SCREEN_BRIGHTNESS_MODE)!=0 ) {
+                Settings.System.putInt(detail_Context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, 0);
+            }
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        sb_bright.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            Window window = getActivity().getWindow();
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
+                if (progress < 10) {
+                    progress = 10;
+                    seekBar.setProgress(progress);
+                } else if (progress > 250) {
+                    progress = 250;
+                }
+                tv_bright_state_value.setText(progress+"");
+
+                //# 객체화
+                WindowManager.LayoutParams parms =  window.getAttributes();
+                parms.screenBrightness = (float) progress / 250;
+                parms.flags |= WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
+                window.setAttributes(parms);
+
+                //직접 적용
+                //Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, set_Brite);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+    }
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, init_system_Sound, AudioManager.FLAG_PLAY_SOUND);
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, init_music_Sound, AudioManager.FLAG_PLAY_SOUND);
     }
 }

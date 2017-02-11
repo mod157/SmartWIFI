@@ -1,12 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.nammu.smartwifi.activity.DetailActivity"
     android:background="@color/backgray">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/detail_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/toolbar_draw" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:drawingCacheQuality="auto"
+            android:layout_gravity="right"
+            android:id="@+id/iv_toolbar"
+            android:layout_marginRight="10dp"
+            app:srcCompat="@drawable/ecologism" />
+    </android.support.v7.widget.Toolbar>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -80,35 +95,54 @@
                     android:gravity="center"
                     android:padding="5dp" />
 
-                <SeekBar
-                    android:id="@+id/sb_sound"
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp" />
+                    android:layout_height="match_parent">
 
-                <RadioGroup
+                    <TextView
+                        android:text="벨소리"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <SeekBar
+                        android:id="@+id/sb_sound"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:layout_weight="1" />
+
+                    <CheckBox
+                        android:id="@+id/cb_sound_vibrate"
+                        android:text="@string/detail_Sound_Vibrate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent" />
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:id="@+id/rbGroup">
+                    android:layout_marginTop="10dp">
 
-                    <RadioButton
-                        android:id="@+id/rb_sound_vibrate"
+                    <TextView
+                        android:text="뮤   직"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <SeekBar
+                        android:id="@+id/sb_sound"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:layout_weight="1"
+                        android:layout_marginLeft="1dp" />
+
+                    <CheckBox
                         android:text="@string/detail_Sound_Vibrate"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_weight="1" />
-
-                    <RadioButton
-                        android:id="@+id/rb_sound_mute"
-                        android:text="@string/detail_Sound_Mute"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:gravity="center|start"
-                        android:layout_gravity="center" />
-                </RadioGroup>
-
+                        android:visibility="invisible" />
+                </LinearLayout>
             </LinearLayout>
 
             <TextView

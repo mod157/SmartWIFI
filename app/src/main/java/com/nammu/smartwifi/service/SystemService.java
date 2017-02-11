@@ -1,4 +1,4 @@
-package com.nammu.smartwifi.classdata;
+package com.nammu.smartwifi.service;
 
 import android.app.Service;
 import android.content.Intent;

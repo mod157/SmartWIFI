@@ -1,8 +1,11 @@
 package com.nammu.smartwifi.fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,11 +27,11 @@ import butterknife.OnClick;
  */
 
 public class SetFragment extends Fragment {
-
     private final String TAG = "##### SetFragment";
     OnChangedListener mCallback;
     private WifiData data = new WifiData();
-    View setView;
+    Context set_Context;
+
     @BindView(R.id.et_add_name)
     EditText et_add_name;
     @BindView(R.id.tv_add_WifiSelectName)
@@ -58,28 +61,39 @@ public class SetFragment extends Fragment {
         fragment.setArguments(bundle);
         return fragment;
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
-        setView = inflater.inflate( R.layout.fragment_set, container, false);
-        ButterKnife.bind(this, setView);
+        View view = inflater.inflate( R.layout.fragment_set, container, false);
+        set_Context = view.getContext();
+        ButterKnife.bind(this, view);
+        //Activity로 부터 전달
         Bundle bundle = getArguments();
         if(bundle != null) {
             Log.e(TAG, "Bundler get Parcelable");
             data = bundle.getParcelable("WifiData_Bundle");
         }
-        return setView;
+        ToolbarSet(view);
+        return view;
     }
 
+    private void ToolbarSet(View view){
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.set_toolbar);
+        toolbar.setTitle(getString(R.string.title_activity_add));
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.setSupportActionBar(toolbar);
+        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
 
     private boolean isChecking(){
         if(et_add_name.getText().toString().equals("")){
             Log.e(TAG,"'name' no edit");
-            Toast.makeText(setView.getContext(),"이름을 입력해주십시오.",Toast.LENGTH_SHORT).show();
+            Toast.makeText(set_Context,"이름을 입력해주십시오.",Toast.LENGTH_SHORT).show();
             return false;
         }
         if(tv_add_WifiName.getText().toString().equals("")){
             Log.e(TAG,"Wifi no select");
-            Toast.makeText(setView.getContext(),"Wifi를 선택해주십시오.",Toast.LENGTH_SHORT).show();
+            Toast.makeText(set_Context,"Wifi를 선택해주십시오.",Toast.LENGTH_SHORT).show();
             return false;
         }
         data_insert();
@@ -88,8 +102,11 @@ public class SetFragment extends Fragment {
 
     public void data_insert(){
         data.setName(et_add_name.getText().toString());
+
+        //# wifi데이터
         data.setSSID(tv_add_WifiName.getText().toString());
         data.setBSSID("01010");
+
         data.setPripority(sb_add_Priority.getProgress());
     }
 
@@ -101,13 +118,10 @@ public class SetFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        // This makes sure that the container activity has implemented
-        // the callback interface. If not, it throws an exception
         try {
             mCallback = (OnChangedListener) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnHeadlineSelectedListener");
+            throw new ClassCastException(activity.toString());
         }
     }
 }
