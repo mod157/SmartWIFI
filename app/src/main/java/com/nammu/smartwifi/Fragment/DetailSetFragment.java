@@ -24,11 +24,13 @@ import com.nammu.smartwifi.R;
 import com.nammu.smartwifi.activity.MainActivity;
 import com.nammu.smartwifi.realmdb.RealmDB;
 import com.nammu.smartwifi.realmdb.WifiData;
+import com.nammu.smartwifi.realmdb.WifiData_State;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
+import io.realm.Realm;
 
 /**
  * Created by SunJae on 2017-02-09.
@@ -116,7 +118,7 @@ public class DetailSetFragment extends Fragment  {
             }
         }
 
-        if(setting_state[BLUETOOTH_STATE]){
+        if(setting_state[BRIGHT_STATE]){
             bright_size = sb_bright.getProgress();
         }
 
@@ -144,25 +146,63 @@ public class DetailSetFragment extends Fragment  {
         ButterKnife.bind(this, view);
         detail_Context = view.getContext();
         Log.e(TAG,"Crete OK");
-        Bundle bundle = getArguments();
-        if(bundle != null) {
-            Log.e(TAG, "Bundler get Parcelable");
-            data = bundle.getParcelable("WifiData_Bundle");
+        if (MainActivity.VIEW_EDIT) {
+            Bundle bundle = getArguments();
+            if (bundle != null) {
+                Log.e(TAG, "Bundler get Parcelable");
+                data = bundle.getParcelable("WifiData_Bundle");
+                EditStatus();
+            }
+        }else{
+            SetCurrentStatus();
         }
-        SetCurrentStatus();
+
+        audioManager = (AudioManager) detail_Context.getSystemService(Context.AUDIO_SERVICE);
+        init_system_Sound = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+        ChangeAudio();
+        ChangeBright();
         return view;
     }
 
-    private void  SetCurrentStatus() {
-        audioManager = (AudioManager) detail_Context.getSystemService(Context.AUDIO_SERVICE);
-        init_system_Sound = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-        BluetoothAdapter blueAdapter = BluetoothAdapter.getDefaultAdapter();
+    private void EditStatus(){
+        Realm realm = RealmDB.RealmInit(getContext());
+        WifiData_State state = realm.where(WifiData_State.class).equalTo("BSSID",data.getBSSID()).findFirst();
+        sw_wifi.setChecked(state.getWifi_State());
+        sw_bluetooth.setChecked(state.getBluetooth_State());
+        boolean soundCheck = state.getSound_State();
+        boolean brightCheck = state.getBright_State();
 
+        if(soundCheck){
+            int soundSize = state.getSound_Size();
+            sw_sound.setChecked(soundCheck);
+            if(soundSize == 0) {
+                sb_sound.setProgress(0);
+                tv_sound_state_value.setText(getString(R.string.detail_Sound_Mute));
+            }else if(soundSize > 0){
+                sb_sound.setProgress(soundSize);
+                tv_sound_state_value.setText(soundSize+"");
+            }else{
+                sb_sound.setProgress(0);
+                tv_sound_state_value.setText(getString(R.string.detail_Sound_Vibrate));
+            }
+        }
+
+        if(brightCheck){
+            sw_bright.setChecked(brightCheck);
+            sb_bright.setProgress(state.getBright_Size());
+            tv_bright_state_value.setText(((float)(state.getBright_Size())/250)*100  + "%");
+        }
+    }
+
+    //현재 상태
+    private void  SetCurrentStatus() {
+        BluetoothAdapter blueAdapter = BluetoothAdapter.getDefaultAdapter();
         if (blueAdapter == null) {
             sw_bluetooth.setChecked(false);
         } else {
             sw_bluetooth.setChecked(blueAdapter.isEnabled());
         }
+
         sw_sound.setChecked(true);
         linear_sound.setVisibility(View.VISIBLE);
         sw_bright.setChecked(true);
@@ -183,12 +223,22 @@ public class DetailSetFragment extends Fragment  {
                 cb_sound_vibrate.setChecked(true);
                 break;
             case  AudioManager.RINGER_MODE_NORMAL:
-                tv_sound_state_value.setText(audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM)+"");
+                int size = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+                tv_sound_state_value.setText(size+"");
+                sb_sound.setProgress(size);
                 cb_sound_vibrate.setChecked(false);
                 break;
         }
-        ChangeAudio();
-        ChangeBright();
+        try {
+            if(Settings.System.getInt(detail_Context.getContentResolver(),Settings.System.SCREEN_BRIGHTNESS_MODE)!=0 ) {
+                Settings.System.putInt(detail_Context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, 0);
+            }
+            Window window = getActivity().getWindow();
+            WindowManager.LayoutParams parms =  window.getAttributes();
+            sb_bright.setProgress ((int)(parms.screenBrightness*250));
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public void ChangeAudio(){
@@ -203,31 +253,27 @@ public class DetailSetFragment extends Fragment  {
                 audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, progress, AudioManager.FLAG_PLAY_SOUND);
                 tv_sound_state_value.setText(progress+"");
             }
-
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {}
-
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {}
         });
+
         cb_sound_vibrate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                audioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
-                tv_sound_state_value.setText("진동");
+                if(isChecked) {
+                    Log.e(TAG, "진동 Check");
+                    audioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+                    sb_sound.setProgress(0);
+                    cb_sound_vibrate.setChecked(isChecked);
+                    tv_sound_state_value.setText("진동");
+                }
             }
         });
     }
 
     public void ChangeBright(){
-        try {
-            if(Settings.System.getInt(detail_Context.getContentResolver(),Settings.System.SCREEN_BRIGHTNESS_MODE)!=0 ) {
-                Settings.System.putInt(detail_Context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, 0);
-            }
-        } catch (Settings.SettingNotFoundException e) {
-            e.printStackTrace();
-        }
-
         sb_bright.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             Window window = getActivity().getWindow();
             @Override
@@ -238,11 +284,14 @@ public class DetailSetFragment extends Fragment  {
                 } else if (progress > 250) {
                     progress = 250;
                 }
-                tv_bright_state_value.setText(progress+"");
+                float bright_value = (float)progress / 250;
+
+                //TODO 첫째자리만
+                tv_bright_state_value.setText(bright_value * 100 + "%");
 
                 //TODO 객체화
                 WindowManager.LayoutParams parms =  window.getAttributes();
-                parms.screenBrightness = (float) progress / 250;
+                parms.screenBrightness = bright_value;
                 parms.flags |= WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
                 window.setAttributes(parms);
 
@@ -257,6 +306,7 @@ public class DetailSetFragment extends Fragment  {
             public void onStopTrackingTouch(SeekBar seekBar) {}
         });
     }
+
     @Override
     public void onDestroy(){
         super.onDestroy();

@@ -8,7 +8,11 @@ import android.util.Log;
 import com.nammu.smartwifi.R;
 import com.nammu.smartwifi.fragment.DetailSetFragment;
 import com.nammu.smartwifi.fragment.SetFragment;
+import com.nammu.smartwifi.realmdb.RealmDB;
 import com.nammu.smartwifi.realmdb.WifiData;
+import com.nammu.smartwifi.realmdb.WifiData_State;
+
+import io.realm.Realm;
 
 public class SetActivity extends AppCompatActivity implements SetFragment.OnChangedListener {
     private String TAG = "##### SetActiviy";

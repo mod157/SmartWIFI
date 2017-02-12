@@ -38,13 +38,14 @@ public class WifiData extends RealmObject implements Parcelable {
     public boolean getisPlay(){return isPlay;}
     public int getPripority(){return Pripority;}
     public WifiData(){}
+
     protected WifiData (Parcel pl){
         Name = pl.readString();
         SSID = pl.readString();
         BSSID = pl.readString();
         Pripority = pl.readInt();
-
     }
+
     @Override
     public int describeContents() {
         return 0;

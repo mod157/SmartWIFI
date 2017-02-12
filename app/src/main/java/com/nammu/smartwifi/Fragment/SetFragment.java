@@ -40,6 +40,9 @@ public class SetFragment extends Fragment {
 
     @OnClick(R.id.tv_add_WifiSelectName)
     public void wifiSelect(View view){
+        //TODO Wifi 변경을 불가 or 기존에 존재하는 WIFI만을 제외하고 다시 보여줌
+        if(MainActivity.VIEW_EDIT)
+            return;
         //주변 리스트와 저장된 wifi 리스트를 보여줘서 선택할 수 있게 설정
         //RecyclerView 하나를 더 생성 해야할 듯\
         tv_add_WifiName.setText("Ok");
@@ -76,6 +79,7 @@ public class SetFragment extends Fragment {
                 Log.e(TAG,data.getName() + data.getSSID());
                 tv_add_WifiName.setText(data.getSSID());
                 et_add_name.setText(data.getName());
+                sb_add_Priority.setProgress(data.getPripority());
             }
         }
         return view;
@@ -98,7 +102,6 @@ public class SetFragment extends Fragment {
 
     public void data_insert(){
         data.setName(et_add_name.getText().toString());
-
         //# wifi데이터
         data.setSSID(tv_add_WifiName.getText().toString());
         data.setBSSID("01010");
