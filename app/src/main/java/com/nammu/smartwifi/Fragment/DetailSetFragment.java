@@ -130,6 +130,8 @@ public class DetailSetFragment extends Fragment  {
         Intent intent = new Intent(getContext(), MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
+        //오디오 초기화
+        audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, init_system_Sound, AudioManager.FLAG_PLAY_SOUND);
     }
 
     public static Fragment newInstance(WifiData data){
@@ -146,25 +148,29 @@ public class DetailSetFragment extends Fragment  {
         ButterKnife.bind(this, view);
         detail_Context = view.getContext();
         Log.e(TAG,"Crete OK");
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            Log.e(TAG, "Bundler get Parcelable");
+            data = bundle.getParcelable("WifiData_Bundle");
+        }
+
         if (MainActivity.VIEW_EDIT) {
-            Bundle bundle = getArguments();
-            if (bundle != null) {
-                Log.e(TAG, "Bundler get Parcelable");
-                data = bundle.getParcelable("WifiData_Bundle");
-                EditStatus();
-            }
+            EditStatus();
         }else{
             SetCurrentStatus();
         }
 
         audioManager = (AudioManager) detail_Context.getSystemService(Context.AUDIO_SERVICE);
         init_system_Sound = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+        sb_sound.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM));
         ChangeAudio();
         ChangeBright();
         return view;
     }
 
     private void EditStatus(){
+        audioManager = (AudioManager) detail_Context.getSystemService(Context.AUDIO_SERVICE);
+        init_system_Sound = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
         Realm realm = RealmDB.RealmInit(getContext());
         WifiData_State state = realm.where(WifiData_State.class).equalTo("BSSID",data.getBSSID()).findFirst();
         sw_wifi.setChecked(state.getWifi_State());
@@ -196,6 +202,8 @@ public class DetailSetFragment extends Fragment  {
 
     //현재 상태
     private void  SetCurrentStatus() {
+        audioManager = (AudioManager) detail_Context.getSystemService(Context.AUDIO_SERVICE);
+        init_system_Sound = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
         BluetoothAdapter blueAdapter = BluetoothAdapter.getDefaultAdapter();
         if (blueAdapter == null) {
             sw_bluetooth.setChecked(false);
@@ -223,9 +231,8 @@ public class DetailSetFragment extends Fragment  {
                 cb_sound_vibrate.setChecked(true);
                 break;
             case  AudioManager.RINGER_MODE_NORMAL:
-                int size = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-                tv_sound_state_value.setText(size+"");
-                sb_sound.setProgress(size);
+                tv_sound_state_value.setText(init_system_Sound+"");
+                sb_sound.setProgress(init_system_Sound);
                 cb_sound_vibrate.setChecked(false);
                 break;
         }
@@ -233,9 +240,10 @@ public class DetailSetFragment extends Fragment  {
             if(Settings.System.getInt(detail_Context.getContentResolver(),Settings.System.SCREEN_BRIGHTNESS_MODE)!=0 ) {
                 Settings.System.putInt(detail_Context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, 0);
             }
-            Window window = getActivity().getWindow();
-            WindowManager.LayoutParams parms =  window.getAttributes();
-            sb_bright.setProgress ((int)(parms.screenBrightness*250));
+            int bright = Settings.System.getInt(detail_Context.getContentResolver(),Settings.System.SCREEN_BRIGHTNESS);
+            sb_bright.setProgress (bright);
+            tv_bright_state_value.setText((float)bright/250 * 100 + "%");
+            Log.e(TAG, bright/250 * 100 + "%");
         } catch (Settings.SettingNotFoundException e) {
             e.printStackTrace();
         }
@@ -310,6 +318,5 @@ public class DetailSetFragment extends Fragment  {
     @Override
     public void onDestroy(){
         super.onDestroy();
-        audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, init_system_Sound, AudioManager.FLAG_PLAY_SOUND);
     }
 }

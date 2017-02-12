@@ -76,6 +76,15 @@ public class RealmDB {
         realm.close();
     }
 
-    public static void deleteData(Context context){}
-    public static void deleteData_State(Context context){}
+    public static void deleteData(Context context, final WifiData data){
+        Realm realm = RealmInit(context);
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                WifiData_State state = realm.where(WifiData_State.class).equalTo("BSSID",data.getBSSID()).findFirst();
+                data.deleteFromRealm();
+                state.deleteFromRealm();
+            }
+        });
+    }
 }

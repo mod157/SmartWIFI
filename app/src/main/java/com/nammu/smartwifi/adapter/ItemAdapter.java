@@ -48,10 +48,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(ItemAdapter.ViewHolder holder, int position) {
-        WifiData item = itemList.get(position);
-        holder.tv_wifiName.setText(item.getName());
-        holder.tv_wifiSSID.setText(item.getSSID());
-        holder.tv_wifistate.setChecked(item.getisPlay());
+            WifiData item = itemList.get(position);
+            holder.tv_wifiName.setText(item.getName());
+            holder.tv_wifiSSID.setText(item.getSSID());
+            holder.sw_wifistate.setChecked(item.getisPlay());
     }
 
     @Override
@@ -61,18 +61,17 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         private Context context;
+        private RecyclerMenuDialog dialog;
         @BindView(R.id.tv_rec_WifiName)
         TextView tv_wifiName;
         @BindView(R.id.tv_rec_WifiSSID)
         TextView tv_wifiSSID;
         @BindView(R.id.sw_item)
-        Switch tv_wifistate;
+        Switch sw_wifistate;
 
         @OnCheckedChanged(R.id.sw_item)
         public void checkedChange(CompoundButton compoundButton, boolean isCheck) {
-            WifiData data = itemList.get(getPosition());
-            if(data.getisPlay() != isCheck)
-                RealmDB.InsertOrUpdate_Data(context,data, isCheck);
+            isWifi_state(isCheck);
         }
 
         public ViewHolder(View itemView) {
@@ -81,18 +80,28 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
             ButterKnife.bind(this, itemView);
         }
 
-        @OnClick(R.id.linear_item)
-        @Override
-        public void onClick(View view) {
+        private void isWifi_state(boolean isCheck){
+            WifiData data = itemList.get(getPosition());
+            if(data.getisPlay() != isCheck)
+                RealmDB.InsertOrUpdate_Data(context,data, isCheck);
+        }
+
+        private void SetActivity_Start(){
             MainActivity.VIEW_EDIT = true;
             Intent intent = new Intent(context, SetActivity.class);
             intent.putExtra("Edit_WifiData", itemList.get(getPosition()));
             context.startActivity(intent);
         }
+        @OnClick(R.id.linear_item)
+        @Override
+        public void onClick(View view) {
+            SetActivity_Start();
+        }
+
         @OnLongClick(R.id.linear_item)
         @Override
         public boolean onLongClick(View view) {
-            RecyclerMenuDialog dialog = new RecyclerMenuDialog(context, itemList.get(getPosition()),
+            dialog = new RecyclerMenuDialog(context, itemList.get(getPosition()),
                     stateClickListener,editClickListener,deleteClickListener);
             dialog.show();
             return false;
@@ -101,21 +110,29 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
         View.OnClickListener stateClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                isWifi_state(!sw_wifistate.isChecked());
+                dialog.cancel();
+                notifyItemChanged(getPosition());
             }
         };
 
         View.OnClickListener editClickListener = new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-
+                SetActivity_Start();
+                dialog.cancel();
             }
         };
 
         View.OnClickListener deleteClickListener = new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-
+                int position = getPosition();
+                RealmDB.deleteData(context, itemList.get(getPosition()));
+                dialog.cancel();
+                itemList.remove(position);
+                notifyItemRemoved(position);
+                notifyItemRangeChanged(position, itemList.size());
             }
         };
     }
