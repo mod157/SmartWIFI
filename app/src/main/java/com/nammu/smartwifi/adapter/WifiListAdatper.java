@@ -37,7 +37,7 @@ public class WifiListAdatper extends RecyclerView.Adapter<WifiListAdatper.ViewHo
         WifiList_Item item = wifiList_Data.get(position);
 
         Log.e("##### WIFIAdapter", "String : ["+ position + "]\n" + item.getSSID()+"\n"+ item.getBSSID()+"\n"+item.getLevel() + item.getSave());
-        holder.tv_dialog_ssid.setText(item.getSSID());
+        holder.tv_dialog_ssid.setText(item.getSSID()+"     ");
         //TODo 세기 마다 글자 색 변경? 표시;
         if(item.getSave())
             holder.iv_dialog_save.setVisibility(View.VISIBLE);

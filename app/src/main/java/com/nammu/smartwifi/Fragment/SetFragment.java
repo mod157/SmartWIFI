@@ -31,6 +31,8 @@ import com.nammu.smartwifi.object.WifiList_Item;
 import com.nammu.smartwifi.realmdb.WifiData;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
@@ -212,13 +214,21 @@ public class SetFragment extends Fragment {
         Log.e("##### WIFIMANGER", "ScanList");
         int size;
         List setList = null;
-        List<WifiConfiguration> configNetworkList = getConfiguredNetworks();
+        List<WifiConfiguration> configNetworkList;
+        if(wm.isWifiEnabled())
+            configNetworkList = getConfiguredNetworks();
+        else{
+            wm.setWifiEnabled(true);
+            configNetworkList = getConfiguredNetworks();
+        }
         List apList = wm.getScanResults();
         if ((size = apList.size()) != 0) {
             Log.e(TAG, size + "");
             List list = new ArrayList();
             for(int j = 0; j<apList.size(); j++){ //SSID 중복 제거 (맥주소 통일화)
                 ScanResult sr2 = (ScanResult) apList.get(j);
+                if(sr2.SSID.toString().trim().equals(""))
+                    continue;
                 list.add(sr2.SSID.toString());
             }
             ArrayList<String> wifilist = new ArrayList(new HashSet(list));
@@ -227,7 +237,7 @@ public class SetFragment extends Fragment {
                 WifiList_Item item = new WifiList_Item();
                 String ssid = wifilist.get(i);
                 item.setSSID(ssid);
-                item.setBSSID(StringBSSID(apList, ssid));
+                item = ItemSet(apList, item);
                 item.setSave(checkingSaveWifi(configNetworkList, ssid));
                 setlist.add(item);
             }
@@ -261,12 +271,40 @@ public class SetFragment extends Fragment {
             }*/
             //            wifi_List = new ArrayList(setList);
             //ArrayList<String> wifi_List = new ArrayList(new HashSet(setlist));
+            setlist = SortList(setlist);
+            if(wm.isWifiEnabled() && wifi_state)
+                wm.setWifiEnabled(false);
             listDialog = new WifiListDialog(getContext(), setlist,getActivity());
-
         }
     }
-    private String StringBSSID(List apList, String ssid){
+    private ArrayList<WifiList_Item> SortList(ArrayList<WifiList_Item> item){
+        ArrayList<WifiList_Item> tempList = item;
+        ArrayList<WifiList_Item> sortList = new ArrayList<>();
+        for(int i = 0; i<tempList.size(); i++){
+            if(tempList.get(i).getSave()){
+                sortList.add(tempList.get(i));
+                tempList.remove(i);
+            }
+        }
+        // 오름차순 정렬
+        DescendingObj descending = new DescendingObj();
+        Collections.sort(tempList, descending);
+        sortList.addAll(sortList.size(),tempList);
+        return sortList;
+    }
+
+
+    class DescendingObj implements Comparator<WifiList_Item> {
+        @Override
+        public int compare(WifiList_Item o1, WifiList_Item o2) {
+            return ((Integer)o2.getLevel()).compareTo((Integer)o1.getLevel());
+        }
+    }
+
+    private WifiList_Item ItemSet(List apList, WifiList_Item item){
+        String ssid = item.getSSID();
         String bssid = "";
+        int level = 0;
         int listsize = apList.size();
         for(int i = 0; i<listsize; i++) {
             ScanResult sr = (ScanResult) apList.get(i);
@@ -276,10 +314,19 @@ public class SetFragment extends Fragment {
                 }else {
                     bssid += "*" + sr.BSSID;
                 }
+                if (level == 0) {
+                    item.setLevel(sr.level);
+                } else {
+                    if(sr.level < level){
+                        item.setLevel(level);
+                    }
+                }
             }
         }
-        return bssid;
+        item.setBSSID(bssid);
+        return item;
     }
+
     private boolean checkingSaveWifi(List<WifiConfiguration> configNetworkList,String scanSSID){
         //Log.e(TAG, "Configured list \n" + getConfiguredNetworks());
       //  List<WifiConfiguration> list = getConfiguredNetworks();

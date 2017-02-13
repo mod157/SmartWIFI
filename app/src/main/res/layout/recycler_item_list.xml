@@ -9,13 +9,14 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@drawable/shadowborder"
+        android:padding="10dp">
 
         <TextView
         android:id="@+id/tv_dialog_ssid"
         android:layout_width="match_parent"
-        android:background="@color/White"
-        android:layout_height="wrap_content"
+            android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:gravity="center_vertical"
         android:paddingLeft="6dp"
@@ -29,11 +30,8 @@
             android:layout_height="20dp"
             android:layout_width="20dp"
             android:visibility="invisible"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            android:paddingLeft="10dp" />
     </LinearLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/stroke" />
 </LinearLayout>

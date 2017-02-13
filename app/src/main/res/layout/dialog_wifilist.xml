@@ -8,19 +8,24 @@
         android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center">>
+        android:layout_gravity="center"
+        android:padding="10dp">>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
-            android:text="@string/dialog_Title"
+            android:text="@string/dialog_wifilist"
             android:textColor="@android:color/black"
             android:textSize="25dp"
-            android:layout_weight="1"
+            android:gravity="center"
+            android:textStyle="normal|bold"
             android:paddingLeft="20dp"
-            android:gravity="left"
-            android:textStyle="normal|bold" />
+            android:paddingRight="20dp" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/stroke" />
 
         <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_wifiList"
