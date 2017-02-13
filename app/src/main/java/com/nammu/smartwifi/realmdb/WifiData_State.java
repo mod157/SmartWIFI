@@ -1,8 +1,5 @@
 package com.nammu.smartwifi.realmdb;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
@@ -12,7 +9,6 @@ import io.realm.annotations.Required;
  */
 
 public class WifiData_State extends RealmObject{
-
     @PrimaryKey
     @Required
     private String BSSID;

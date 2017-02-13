@@ -21,7 +21,6 @@ import io.realm.Realm;
  */
 
 public class RecyclerMenuDialog extends Dialog {
-    private String bssid;
     private WifiData data;
     private Realm realm;
     private View.OnClickListener clickState;
