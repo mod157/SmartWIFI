@@ -1,16 +1,11 @@
 package com.nammu.smartwifi.fragment;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -29,6 +24,7 @@ import com.nammu.smartwifi.activity.MainActivity;
 import com.nammu.smartwifi.dialog.WifiListDialog;
 import com.nammu.smartwifi.interfaces.OnInterface;
 import com.nammu.smartwifi.object.WifiList_Item;
+import com.nammu.smartwifi.object.WifiScan;
 import com.nammu.smartwifi.realmdb.WifiData;
 
 import java.util.ArrayList;
@@ -40,8 +36,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
-import static android.content.Context.WIFI_SERVICE;
 
 /**
  * Created by SunJae on 2017-02-09.
@@ -144,15 +138,12 @@ public class SetFragment extends Fragment {
         Log.e(TAG,"Scan 이후");
         return view;
     }
+
     private void initWifiScan(){
-        wm = (WifiManager) getContext().getSystemService(WIFI_SERVICE);
-        if(wm.isWifiEnabled())
-            configNetworkList = getConfiguredNetworks();
-        else{
-            wm.setWifiEnabled(true);
-            configNetworkList = getConfiguredNetworks();
-        }
-        scan();
+        wm = (WifiManager) getContext().getSystemService(Context.WIFI_SERVICE);
+        WifiScan wifiScan = new WifiScan(getContext(),wm, wifiScanResultInterface);
+        configNetworkList = wifiScan.configScan();
+        wifiScan.Scan();
     }
 
     private boolean isChecking(){
@@ -178,55 +169,12 @@ public class SetFragment extends Fragment {
         data.setPripority(sb_add_Priority.getProgress());
     }
 
-
-    public void scan() {
-        //TODO 3초가 걸림
-        //TODO single톤으로 데이터를 저장해서 가져오면?
-        wifi_state = wm.isWifiEnabled();
-        if (wifi_state) {
-            // 켜져 있는 상태면 바로 스캔
-            wm.startScan();
-        } else {
-            // 현재 wifi가 꺼져 있으면
-            // 항상 검색 허용이 가능한지 확인
-            if (Build.VERSION.SDK_INT >= 18 && wm.isScanAlwaysAvailable()) {
-                //  4.3 버전 이상인지 체크한다.
-                //  항상검색 허용 설정이 활성화상태인지 체크한다.
-                wm.startScan();  // 바로 스캔 실행
-            } else {
-                //나머지는 Wifi를 잠시 켜서 확인한다.
-                wm.setWifiEnabled(true);
-                wm.startScan();
-            }
-        }
-
-        Log.e("##### WIFIMANGER", "startScan");
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-        getContext().registerReceiver(wifiR, filter);
-    }
-
-    private BroadcastReceiver wifiR = new BroadcastReceiver() {
-        @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if(intent.getAction().equals(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)){
-                Log.e("##### WIFIMANGER", "BroadCast");
-                if(!wifi_state)
-                    wm.setWifiEnabled(false);
-                searchWifiList();
-                context.unregisterReceiver(wifiR);
-            }
-        }
-    };
-
     // wifi 스캔 후에 스캔 한 갯수만큼 출력하기
-    public void searchWifiList() {
-        Log.e("##### WIFIMANGER", "ScanList");
+    public void searchWifiList(List<ScanResult> scanList) {
+        Log.e(TAG, "ScanList");
         int size;
         List setList = null;
-
-        List apList = wm.getScanResults();
+        List apList = scanList;
         if ((size = apList.size()) != 0) {
             Log.e(TAG, size + "");
             List list = new ArrayList();
@@ -246,7 +194,6 @@ public class SetFragment extends Fragment {
                 item.setSave(checkingSaveWifi(configNetworkList, ssid));
                 setlist.add(item);
             }
-
             setlist = SortList(setlist);
             if(wm.isWifiEnabled() && wifi_state)
                 wm.setWifiEnabled(false);
@@ -288,7 +235,7 @@ public class SetFragment extends Fragment {
                 if(bssid.equals("")) {
                     bssid += sr.BSSID;
                 }else {
-                    bssid += "*" + sr.BSSID;
+                    bssid += "@" + sr.BSSID;
                 }
                 if (level == 0) {
                     item.setLevel(sr.level);
@@ -306,21 +253,27 @@ public class SetFragment extends Fragment {
     private boolean checkingSaveWifi(List<WifiConfiguration> configNetworkList,String scanSSID){
         //Log.e(TAG, "Configured list \n" + getConfiguredNetworks());
       //  List<WifiConfiguration> list = getConfiguredNetworks();
-        if (configNetworkList.isEmpty()) {
-            Log.v(TAG, "저장된 list가 빔");
-        }
+        try {
+            if (configNetworkList.isEmpty()) {
+                Log.v(TAG, "저장된 list가 빔");
+            }
 
-        for (WifiConfiguration i : configNetworkList) {
-            if (i.SSID != null && i.SSID.equals("\"" + scanSSID + "\"")) {
-                Log.e(TAG, "SSID : " + i.SSID + ", BSSID" + i.BSSID);
+            for (WifiConfiguration i : configNetworkList) {
+                if (i.SSID != null && i.SSID.equals("\"" + scanSSID + "\"")) {
+                    Log.e(TAG, "SSID : " + i.SSID + ", BSSID" + i.BSSID);
                 /*wm.disconnect();
                 wm.enableNetwork(i.networkId, true);
                 wm.reconnect();
                 break;*/
-                return true;
+                    return true;
+                }
             }
+            return false;
+        }catch(NullPointerException e){
+            Log.e(TAG, ""+e.toString());
+            checkingSaveWifi(configNetworkList, scanSSID);
+            return false;
         }
-      return false;
     }
 
     private List<WifiConfiguration> getConfiguredNetworks() {
@@ -339,6 +292,14 @@ public class SetFragment extends Fragment {
             bssid = item.getBSSID();
             if(listDialog.isShowing())
                 listDialog.cancel();
+        }
+    };
+
+    public OnInterface.WifiScanResultInterface wifiScanResultInterface = new OnInterface.WifiScanResultInterface() {
+        @Override
+        public void setScanResult(List<ScanResult> list) {
+            Log.e(TAG, "Interface Result");
+            searchWifiList(list);
         }
     };
 

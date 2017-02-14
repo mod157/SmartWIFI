@@ -15,6 +15,7 @@ import com.nammu.smartwifi.adapter.ItemAdapter;
 import com.nammu.smartwifi.realmdb.RealmDB;
 import com.nammu.smartwifi.realmdb.WifiData;
 import com.nammu.smartwifi.realmdb.WifiData_State;
+import com.nammu.smartwifi.service.SystemService;
 
 import java.util.ArrayList;
 
@@ -50,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
         ListView();
+        Intent intent = new Intent(this, SystemService.class);
+        startService(intent);
     }
 
     //TODO 삭제

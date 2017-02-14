@@ -3,6 +3,7 @@
     <string name="title_activity_main">목록</string>
     <string name="title_activity_add">추가</string>
     <string name="title_activity_edit">변경</string>
+    <string name="title_activity_setting">설정</string>
 
     <!-- add activity -->
     <string name="add_Name">표시 될 이름</string>
