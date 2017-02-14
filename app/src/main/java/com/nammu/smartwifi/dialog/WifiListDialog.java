@@ -11,6 +11,7 @@ import android.view.WindowManager;
 
 import com.nammu.smartwifi.R;
 import com.nammu.smartwifi.adapter.WifiListAdatper;
+import com.nammu.smartwifi.interfaces.OnInterface;
 import com.nammu.smartwifi.object.WifiList_Item;
 
 import java.util.ArrayList;
@@ -28,11 +29,14 @@ public class WifiListDialog extends Dialog {
     Context context;
     ArrayList<WifiList_Item> wifi_List;
     Activity activity;
-    public WifiListDialog(Context context, ArrayList<WifiList_Item> list, Activity activity) {
+    OnInterface.WifiListClickListener listener;
+
+    public WifiListDialog(Context context, ArrayList<WifiList_Item> list, Activity activity, OnInterface.WifiListClickListener listener) {
         super(context);
         this.context = context;
         wifi_List = list;
         this.activity = activity;
+        this.listener = listener;
     }
 
     @Override
@@ -41,7 +45,7 @@ public class WifiListDialog extends Dialog {
         // 다이얼로그 외부 화면 흐리게 표현
         WindowManager.LayoutParams lpWindow = new WindowManager.LayoutParams();
         lpWindow.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-        lpWindow.dimAmount = 0.2f;
+        lpWindow.dimAmount = 0.9f;
         getWindow().setAttributes(lpWindow);
         setContentView(R.layout.dialog_wifilist);
         ButterKnife.bind(this);
@@ -50,7 +54,7 @@ public class WifiListDialog extends Dialog {
 
     private void ListView(){
         rv_wifiList.setLayoutManager(new LinearLayoutManager(activity));
-        WifiListAdatper adapter = new WifiListAdatper(wifi_List);
+        WifiListAdatper adapter = new WifiListAdatper(wifi_List, listener);
         Log.e("##### WIfiListAdapter", "size : " + adapter.getItemCount());
         rv_wifiList.setAdapter(adapter);
     }

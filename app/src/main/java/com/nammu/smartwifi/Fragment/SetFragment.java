@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.nammu.smartwifi.R;
 import com.nammu.smartwifi.activity.MainActivity;
 import com.nammu.smartwifi.dialog.WifiListDialog;
+import com.nammu.smartwifi.interfaces.OnInterface;
 import com.nammu.smartwifi.object.WifiList_Item;
 import com.nammu.smartwifi.realmdb.WifiData;
 
@@ -50,13 +51,14 @@ public class SetFragment extends Fragment {
     private final String TAG = "##### SetFragment";
     private String bssid = "";
     private WifiListDialog listDialog;
-    OnChangedListener mCallback;
-    private WifiManager wm;
-    private boolean wifi_state;
     private WifiData data = new WifiData();
+    OnInterface.OnChangedListener mCallback;
+    private WifiManager wm;
+    private List<WifiConfiguration> configNetworkList;
+    private boolean wifi_state;
     Context set_Context;
     private ProgressDialog progressDialog;
-    private List wifi_List;
+
     @BindView(R.id.et_add_name)
     EditText et_add_name;
     @BindView(R.id.tv_add_WifiSelectName)
@@ -78,7 +80,7 @@ public class SetFragment extends Fragment {
             public void run() {
                 while(true){
                     Log.e(TAG,"list DIalog is state : " + (listDialog != null));
-                    if(listDialog != null) {
+                    if(listDialog != null && configNetworkList != null) {
                         handler.sendEmptyMessage(0);
                         progressDialog.dismiss();
                         break;
@@ -137,11 +139,20 @@ public class SetFragment extends Fragment {
                 sb_add_Priority.setProgress(data.getPripority());
             }
         }else{
-            wm = (WifiManager) getContext().getSystemService(WIFI_SERVICE);
-            scan();
+            initWifiScan();
         }
         Log.e(TAG,"Scan 이후");
         return view;
+    }
+    private void initWifiScan(){
+        wm = (WifiManager) getContext().getSystemService(WIFI_SERVICE);
+        if(wm.isWifiEnabled())
+            configNetworkList = getConfiguredNetworks();
+        else{
+            wm.setWifiEnabled(true);
+            configNetworkList = getConfiguredNetworks();
+        }
+        scan();
     }
 
     private boolean isChecking(){
@@ -214,13 +225,7 @@ public class SetFragment extends Fragment {
         Log.e("##### WIFIMANGER", "ScanList");
         int size;
         List setList = null;
-        List<WifiConfiguration> configNetworkList;
-        if(wm.isWifiEnabled())
-            configNetworkList = getConfiguredNetworks();
-        else{
-            wm.setWifiEnabled(true);
-            configNetworkList = getConfiguredNetworks();
-        }
+
         List apList = wm.getScanResults();
         if ((size = apList.size()) != 0) {
             Log.e(TAG, size + "");
@@ -241,42 +246,14 @@ public class SetFragment extends Fragment {
                 item.setSave(checkingSaveWifi(configNetworkList, ssid));
                 setlist.add(item);
             }
-            /*String str = listAdapterWIFI.adapter.getItem(position).toString();
-            if(str.substring(1,2).equals("."))
-                str = str.substring(10);
-            else
-                str = str.substring(11);
-            int listsize = apList.size();
-            for(int i = 0; i<listsize; i++) {
-                sr = (ScanResult) apList.get(i);
-                if(str.equals(sr.SSID.toString()))
-                    BSSIDlist.add(sr.BSSID);
-            }/*
 
-            /*
-            ArrayList<WifiList_Item> setlist = new ArrayList();
-            //SSID 중복 제거 (맥주소 통일화)
-            for(int j = 0; j<apList.size(); j++){
-                ScanResult sr2 = (ScanResult) apList.get(j);
-                WifiList_Item item = new WifiList_Item();
-                Log.e(TAG,sr2.SSID + ", " + sr2.BSSID + ", " + sr2.level);
-                if(sr2.SSID.toString().trim().equals(""))
-                    continue;
-                item.setSSID(sr2.SSID.toString().trim());
-                item.setBSSID(sr2.BSSID);
-                item.setLevel(sr2.level);
-                //checkingSaveWifi(sr2.SSID.toString().trim());
-                item.setSave(checkingSaveWifi(configNetworkList ,sr2.SSID.toString().trim()));
-                setlist.add(item);
-            }*/
-            //            wifi_List = new ArrayList(setList);
-            //ArrayList<String> wifi_List = new ArrayList(new HashSet(setlist));
             setlist = SortList(setlist);
             if(wm.isWifiEnabled() && wifi_state)
                 wm.setWifiEnabled(false);
-            listDialog = new WifiListDialog(getContext(), setlist,getActivity());
+            listDialog = new WifiListDialog(getContext(), setlist, getActivity(), wifiListClickListener );
         }
     }
+
     private ArrayList<WifiList_Item> SortList(ArrayList<WifiList_Item> item){
         ArrayList<WifiList_Item> tempList = item;
         ArrayList<WifiList_Item> sortList = new ArrayList<>();
@@ -286,13 +263,12 @@ public class SetFragment extends Fragment {
                 tempList.remove(i);
             }
         }
-        // 오름차순 정렬
+        // 내림 차순 정렬
         DescendingObj descending = new DescendingObj();
         Collections.sort(tempList, descending);
         sortList.addAll(sortList.size(),tempList);
         return sortList;
     }
-
 
     class DescendingObj implements Comparator<WifiList_Item> {
         @Override
@@ -355,10 +331,16 @@ public class SetFragment extends Fragment {
         }
         return null;
     }
-    // Fragment를 담고 있는 Activity는 이 interface를 구현해야 한다.
-    public interface OnChangedListener {
-        public void onChangeFragment(WifiData data);
-    }
+
+    public OnInterface.WifiListClickListener wifiListClickListener = new OnInterface.WifiListClickListener() {
+        @Override
+        public void WifiListClick(WifiList_Item item) {
+            tv_add_WifiName.setText(item.getSSID());
+            bssid = item.getBSSID();
+            if(listDialog.isShowing())
+                listDialog.cancel();
+        }
+    };
 
     @Override
     public void onDestroy(){
@@ -371,7 +353,7 @@ public class SetFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mCallback = (OnChangedListener) activity;
+            mCallback = (OnInterface.OnChangedListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString());
         }
