@@ -49,6 +49,7 @@ public class DetailSetFragment extends Fragment  {
     private AudioManager audioManager;
     private int init_system_Sound;
     private Context detail_Context;
+
     @BindView(R.id.linear_sound)
     LinearLayout linear_sound;
     @BindView(R.id.linear_bright)
@@ -121,7 +122,7 @@ public class DetailSetFragment extends Fragment  {
         if(setting_state[BRIGHT_STATE]){
             bright_size = sb_bright.getProgress();
         }
-
+        setting_state[WIFI_STATE] = sw_wifi.isChecked();
         //context, name, ssid. bssid. pripority, isPlay
         RealmDB.InsertOrUpdate_Data(getContext(), name, ssid, bssid, pripority);
         //context, bssid, wifi_state, bluetooth_state, sound_state, sound_size, Bright_state, bright_size
@@ -153,7 +154,6 @@ public class DetailSetFragment extends Fragment  {
             Log.e(TAG, "Bundler get Parcelable");
             data = bundle.getParcelable("WifiData_Bundle");
         }
-
         if (MainActivity.VIEW_EDIT) {
             EditStatus();
         }else{
@@ -169,34 +169,40 @@ public class DetailSetFragment extends Fragment  {
     }
 
     private void EditStatus(){
+        Log.e(TAG,data.getSSID() + " : " + data.getBSSID());
         audioManager = (AudioManager) detail_Context.getSystemService(Context.AUDIO_SERVICE);
         init_system_Sound = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
         Realm realm = RealmDB.RealmInit(getContext());
-        WifiData_State state = realm.where(WifiData_State.class).equalTo("BSSID",data.getBSSID()).findFirst();
-        sw_wifi.setChecked(state.getWifi_State());
-        sw_bluetooth.setChecked(state.getBluetooth_State());
-        boolean soundCheck = state.getSound_State();
-        boolean brightCheck = state.getBright_State();
+        WifiData_State state = realm.where(WifiData_State.class).equalTo("BSSID", data.getBSSID()).findFirst();
+        try {
+            sw_wifi.setChecked(state.getWifi_State());
+            sw_bluetooth.setChecked(state.getBluetooth_State());
+            boolean soundCheck = state.getSound_State();
+            boolean brightCheck = state.getBright_State();
 
-        if(soundCheck){
-            int soundSize = state.getSound_Size();
-            sw_sound.setChecked(soundCheck);
-            if(soundSize == 0) {
-                sb_sound.setProgress(0);
-                tv_sound_state_value.setText(getString(R.string.detail_Sound_Mute));
-            }else if(soundSize > 0){
-                sb_sound.setProgress(soundSize);
-                tv_sound_state_value.setText(soundSize+"");
-            }else{
-                sb_sound.setProgress(0);
-                tv_sound_state_value.setText(getString(R.string.detail_Sound_Vibrate));
+            if (soundCheck) {
+                int soundSize = state.getSound_Size();
+                sw_sound.setChecked(soundCheck);
+                if (soundSize == 0) {
+                    sb_sound.setProgress(0);
+                    tv_sound_state_value.setText(getString(R.string.detail_Sound_Mute));
+                } else if (soundSize > 0) {
+                    sb_sound.setProgress(soundSize);
+                    tv_sound_state_value.setText(soundSize + "");
+                } else {
+                    sb_sound.setProgress(0);
+                    tv_sound_state_value.setText(getString(R.string.detail_Sound_Vibrate));
+                }
             }
-        }
 
-        if(brightCheck){
-            sw_bright.setChecked(brightCheck);
-            sb_bright.setProgress(state.getBright_Size());
-            tv_bright_state_value.setText(((float)(state.getBright_Size())/250)*100  + "%");
+            if (brightCheck) {
+                sw_bright.setChecked(brightCheck);
+                sb_bright.setProgress(state.getBright_Size());
+                tv_bright_state_value.setText(((float) (state.getBright_Size()) / 250) * 100 + "%");
+            }
+        }catch(Exception e){
+            Log.e(TAG, "realm error");
+            e.printStackTrace();
         }
     }
 
@@ -204,6 +210,7 @@ public class DetailSetFragment extends Fragment  {
     private void  SetCurrentStatus() {
         audioManager = (AudioManager) detail_Context.getSystemService(Context.AUDIO_SERVICE);
         init_system_Sound = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+
         BluetoothAdapter blueAdapter = BluetoothAdapter.getDefaultAdapter();
         if (blueAdapter == null) {
             sw_bluetooth.setChecked(false);

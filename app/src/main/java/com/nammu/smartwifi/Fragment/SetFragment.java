@@ -127,7 +127,8 @@ public class SetFragment extends Fragment {
             if (bundle != null) {
                 Log.e(TAG, "Bundler get Parcelable");
                 data = bundle.getParcelable("WifiData_Bundle");
-                Log.e(TAG,data.getName() + data.getSSID());
+                Log.e(TAG,data.getName() + data.getSSID() + data.getBSSID());
+                bssid = data.getBSSID();
                 tv_add_WifiName.setText(data.getSSID());
                 et_add_name.setText(data.getName());
                 sb_add_Priority.setProgress(data.getPripority());
