@@ -1,10 +1,12 @@
 package com.nammu.smartwifi.fragment;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -15,6 +17,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -22,6 +25,7 @@ import android.widget.TextView;
 
 import com.nammu.smartwifi.R;
 import com.nammu.smartwifi.activity.MainActivity;
+import com.nammu.smartwifi.interfaces.OnInterface;
 import com.nammu.smartwifi.realmdb.RealmDB;
 import com.nammu.smartwifi.realmdb.WifiData;
 import com.nammu.smartwifi.realmdb.WifiData_State;
@@ -49,6 +53,7 @@ public class DetailSetFragment extends Fragment  {
     private AudioManager audioManager;
     private int init_system_Sound;
     private Context detail_Context;
+    private OnInterface.ToolbarImageVisible callback;
 
     @BindView(R.id.linear_sound)
     LinearLayout linear_sound;
@@ -322,8 +327,25 @@ public class DetailSetFragment extends Fragment  {
         });
     }
 
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            callback = (OnInterface.ToolbarImageVisible) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString());
+        }
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+    }
+
     @Override
     public void onDestroy(){
         super.onDestroy();
+        callback.setToolbarimage();
     }
 }

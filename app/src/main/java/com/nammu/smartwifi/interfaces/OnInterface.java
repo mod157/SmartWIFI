@@ -25,4 +25,7 @@ public class OnInterface {
     public interface WifiScanResultInterface{
         public void setScanResult(List<ScanResult> list);
     }
+    public interface ToolbarImageVisible{
+        public void setToolbarimage();
+    }
 }

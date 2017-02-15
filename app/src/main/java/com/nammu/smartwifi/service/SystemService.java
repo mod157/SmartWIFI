@@ -42,7 +42,7 @@ public class SystemService extends Service {
     private Handler scanHandler;
     private int saveTime = 1;
     private int startScan = 0;
-    private int scanTimer = 3000;
+    private int scanTimer = 15000;
     private WifiData_State initData;
     private String lastSSID = "";
 
@@ -59,12 +59,14 @@ public class SystemService extends Service {
     Runnable scanStart = new Runnable() {
         @Override
         public void run() {
-           if(startScan > saveTime){
+           /* Log.e(TAG, "dealy : " +startScan + " : " + saveTime);
+           if(startScan >= saveTime){
                startScan = 0;
                wifiScan.Scan();
            }else
-               startScan++;
-            scanHandler.postDelayed(this, scanTimer);
+               startScan++;*/
+            wifiScan.Scan();
+            scanHandler.postDelayed(this, scanTimer * saveTime);
         }
     };
 

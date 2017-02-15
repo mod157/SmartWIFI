@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -121,6 +122,7 @@ public class SetFragment extends Fragment {
         Log.e(TAG, "CreateView");
         set_Context = view.getContext();
         ButterKnife.bind(this, view);
+
         //Activity로 부터 전달
         if(MainActivity.VIEW_EDIT) {
             Bundle bundle = getArguments();
@@ -142,6 +144,7 @@ public class SetFragment extends Fragment {
 
     private void initWifiScan(){
         wm = (WifiManager) getContext().getSystemService(Context.WIFI_SERVICE);
+        wifi_state = wm.isWifiEnabled();
         WifiScan wifiScan = new WifiScan(getContext(),wm, wifiScanResultInterface);
         configNetworkList = wifiScan.configScan();
         wifiScan.Scan();
@@ -303,12 +306,15 @@ public class SetFragment extends Fragment {
             searchWifiList(list);
         }
     };
-
+    @Override
+    public void onResume(){
+        super.onResume();
+        Log.e(TAG, "Resume");
+    }
     @Override
     public void onDestroy(){
         super.onDestroy();
         Log.e(TAG,"destroy");
-
     }
 
     @Override
