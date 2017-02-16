@@ -42,9 +42,22 @@ public class WifiListAdatper extends RecyclerView.Adapter<WifiListAdatper.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         WifiList_Item item = wifiList_Data.get(position);
-        Log.e("##### WIFIAdapter", "String : ["+ position + "]\n" + item.getSSID()+"\n"+ item.getBSSID()+"\n"+item.getLevel() + item.getSave());
+        Log.e("##### WIFIAdapter", "String : ["+ position + "]\n" + item.getSSID()+"\n"+ item.getBSSID()+"\n"+(item.getLevel()/10) + item.getSave());
         holder.tv_dialog_ssid.setText(item.getSSID()+"     ");
         //TODo 세기 마다 글자 색 변경? 표시;
+        switch ((item.getLevel())/10){
+            case -6:
+            case -7:
+                holder.iv_list_level.setBackgroundResource(R.drawable.shadow_border_level_normal);
+                break;
+            case -8:
+            case -9:
+            case -10:
+                holder.iv_list_level.setBackgroundResource(R.drawable.shadow_border_level_low);
+                break;
+            default:
+                holder.iv_list_level.setBackgroundResource(R.drawable.shadow_border_level_good);
+        }
         if(item.getSave())
             holder.iv_dialog_save.setVisibility(View.VISIBLE);
     }
@@ -55,6 +68,8 @@ public class WifiListAdatper extends RecyclerView.Adapter<WifiListAdatper.ViewHo
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
+        @BindView(R.id.iv_list_level)
+        ImageView iv_list_level;
         @BindView(R.id.tv_dialog_ssid)
         TextView tv_dialog_ssid;
         @BindView(R.id.iv_dialog_save)

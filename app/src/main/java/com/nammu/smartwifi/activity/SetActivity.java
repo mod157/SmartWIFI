@@ -15,13 +15,19 @@ import com.nammu.smartwifi.realmdb.WifiData;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class SetActivity extends AppCompatActivity implements OnInterface.OnChangedListener, OnInterface.ToolbarImageVisible {
     private String TAG = "##### SetActiviy";
     public static boolean isFrag = true;
+    WifiData data;
     @BindView(R.id.iv_toolbar)
     ImageView iv_toolbar;
 
+    @OnClick(R.id.iv_toolbar)
+    public void toolbarImageClick(View view){
+        onChangeFragment(data);
+    }
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +49,7 @@ public class SetActivity extends AppCompatActivity implements OnInterface.OnChan
     @Override
     public void onChangeFragment(WifiData data) {
         iv_toolbar.setVisibility(View.VISIBLE);
+        this.data = data;
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_set, DetailSetFragment.newInstance(data)).addToBackStack(null).commit();
         Log.e(TAG, "changeFragment");
     }

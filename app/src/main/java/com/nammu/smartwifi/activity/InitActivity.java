@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
@@ -22,22 +21,29 @@ public class InitActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_init);
+        SecurityPermission();
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        SecurityPermission();
+    }
+
+    private void SecurityPermission(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (Settings.System.canWrite(this)) {
-                Toast.makeText(this, "onCreate: Already Granted", Toast.LENGTH_SHORT).show();
+              //  Toast.makeText(this, "onCreate: Already Granted", Toast.LENGTH_SHORT).show();
+                PermissionCheck();
             } else {
-                Toast.makeText(this, "onCreate: Not Granted. Permission Requested", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(this, "onCreate: Not Granted. Permission Requested", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(android.provider.Settings.ACTION_MANAGE_WRITE_SETTINGS);
                 intent.setData(Uri.parse("package:" + this.getPackageName()));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
         }
-        PermissionCheck();
-
-
     }
-
     private void PermissionCheck(){
         PermissionListener permissionListener = new PermissionListener() {
             @Override

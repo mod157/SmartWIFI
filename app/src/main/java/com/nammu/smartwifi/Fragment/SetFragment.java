@@ -15,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -208,16 +207,19 @@ public class SetFragment extends Fragment {
     private ArrayList<WifiList_Item> SortList(ArrayList<WifiList_Item> item){
         ArrayList<WifiList_Item> tempList = item;
         ArrayList<WifiList_Item> sortList = new ArrayList<>();
-        for(int i = 0; i<tempList.size(); i++){
+        for(int i = 0; i < tempList.size(); i++){
+            Log.e(TAG+ " " + tempList.size() + " : " + item.size(),"list item : " + tempList.get(i).getSSID() + " : " + tempList.get(i).getSave());
             if(tempList.get(i).getSave()){
+                Log.e(TAG,"OK save : " + tempList.get(i).getSSID());
                 sortList.add(tempList.get(i));
-                tempList.remove(i);
+                tempList.remove(i--);
             }
         }
         // 내림 차순 정렬
         DescendingObj descending = new DescendingObj();
         Collections.sort(tempList, descending);
         sortList.addAll(sortList.size(),tempList);
+        Log.e(TAG,"sortList size : " + sortList.size());
         return sortList;
     }
 
@@ -255,8 +257,6 @@ public class SetFragment extends Fragment {
     }
 
     private boolean checkingSaveWifi(List<WifiConfiguration> configNetworkList,String scanSSID){
-        //Log.e(TAG, "Configured list \n" + getConfiguredNetworks());
-      //  List<WifiConfiguration> list = getConfiguredNetworks();
         try {
             if (configNetworkList.isEmpty()) {
                 Log.v(TAG, "저장된 list가 빔");
@@ -265,10 +265,6 @@ public class SetFragment extends Fragment {
             for (WifiConfiguration i : configNetworkList) {
                 if (i.SSID != null && i.SSID.equals("\"" + scanSSID + "\"")) {
                     Log.e(TAG, "SSID : " + i.SSID + ", BSSID" + i.BSSID);
-                /*wm.disconnect();
-                wm.enableNetwork(i.networkId, true);
-                wm.reconnect();
-                break;*/
                     return true;
                 }
             }

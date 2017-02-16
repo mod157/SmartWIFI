@@ -16,7 +16,6 @@ import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
-import android.view.View;
 
 import com.nammu.smartwifi.R;
 import com.nammu.smartwifi.interfaces.OnInterface;
@@ -25,8 +24,10 @@ import com.nammu.smartwifi.realmdb.RealmDB;
 import com.nammu.smartwifi.realmdb.WifiData;
 import com.nammu.smartwifi.realmdb.WifiData_State;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 
 import io.realm.Realm;
@@ -41,10 +42,10 @@ public class SystemService extends Service {
     private WifiScan wifiScan;
     private Handler scanHandler;
     private int saveTime = 1;
-    private int startScan = 0;
     private int scanTimer = 15000;
     private WifiData_State initData;
     private String lastSSID = "";
+    private boolean flag = false;
 
     @Override
     public void onCreate() {
@@ -59,12 +60,6 @@ public class SystemService extends Service {
     Runnable scanStart = new Runnable() {
         @Override
         public void run() {
-           /* Log.e(TAG, "dealy : " +startScan + " : " + saveTime);
-           if(startScan >= saveTime){
-               startScan = 0;
-               wifiScan.Scan();
-           }else
-               startScan++;*/
             wifiScan.Scan();
             scanHandler.postDelayed(this, scanTimer * saveTime);
         }
@@ -82,7 +77,8 @@ public class SystemService extends Service {
         if(scanList !=null) {
             ScanResult sr;
             size = scanList.size();
-
+            ArrayList<WifiData> results = new ArrayList<>();
+            Realm realm = RealmDB.RealmInit(this);
             //Level순으로 정렬 원하는 위치면 다른 Wifi보다 세기가 강할 확률이 높음
             Comparator<ScanResult> comparator = new Comparator<ScanResult>() {
                 @Override
@@ -98,44 +94,78 @@ public class SystemService extends Service {
 
             for(int i = 0; i < size; i++) {
                 sr = scanList.get(i);
-                Realm realm = RealmDB.RealmInit(this);
-                WifiData itemResult = realm.where(WifiData.class).equalTo("SSID", sr.SSID).findFirst();
+                WifiData itemResult = realm.where(WifiData.class).equalTo("SSID", sr.SSID).equalTo("isPlay", true).findFirst();
 
                 //존재하지 않으면 다음 SSID
                 //또는 현재 연결된 와이파이가 맞다면
                 if (itemResult == null)
                     continue;
-
-                if(wm.getConnectionInfo().getSSID().equals("\""+sr.SSID+"\"")){
-                    Log.e(TAG,wm.getConnectionInfo().getSSID() +" : " + sr.SSID);
-                    delay();
-                    return;
-                }
-
+               /* if(itemResult.getisPlay() == false)
+                    continue;*/
                 String bssid = itemResult.getBSSID();
                 String[] bssids = bssid.split("@");
-                for(int j = 0; j < bssids.length; j++){
-                    if(sr.BSSID.equals(bssids[j])){
-                        resetDataInit();
-                        WifiData_State data_state = realm.where(WifiData_State.class).equalTo("BSSID", itemResult.getBSSID()).findFirst();
-                        SetSetting(data_state, itemResult.getSSID());
-                        //TODO noti set
-                        Notification(itemResult.getSSID());
-                        saveTime = 1;
+                for(int j = 0; j < bssids.length; j++) {
+                    if (sr.BSSID.equals(bssids[j])) {
+                        Log.e(TAG, "Set List : " + itemResult.getSSID() + ", " + itemResult.getPripority() + sr.level);
+                        results.add(itemResult);
+                        break;
+                    }
+                }
+            }
+
+            if(results.size() != 0) {
+                Comparator<WifiData> comparatorPripority = new Comparator<WifiData>() {
+                    @Override
+                    public int compare(WifiData t1, WifiData t2) {
+                        return (((Integer)t2.getPripority()).compareTo((Integer)t1.getPripority()));
+                    }
+                };
+                Collections.sort(results, comparatorPripority);
+                for(int i = 0; i< results.size(); i++){
+                    WifiData item = results.get(i);
+                    Log.e(TAG, "data : " + item.getSSID() + " : " + item.getPripority());
+                }
+                for(int i = 0 ; i < results.size(); i++) {
+                    WifiData item = results.get(i);
+                    Log.e(TAG, "연결된 와이파이 이름 " + wm.getConnectionInfo().getSSID() + " : " + "\"" + item.getSSID() + "\"" + " : " + wm.getConnectionInfo().getSSID().equals("\"" + item.getSSID() + "\""));
+                    if (wm.getConnectionInfo().getSSID().equals("\"" + item.getSSID() + "\"") && flag) {
+                        Log.e(TAG, "이미 연결됨 " + wm.getConnectionInfo().getSSID() + " : " + item.getSSID());
+                        delay();
                         return;
                     }
+
+                    if(!flag)
+                        resetDataInit();
+
+                    flag = true;
+                    WifiData_State data_state = realm.where(WifiData_State.class).equalTo("BSSID", item.getBSSID()).findFirst();
+                    SetSetting(data_state, item.getSSID());
+                    //TODO noti set
+                    if(results.size() == 1)
+                        Notification(item.getSSID());
+                    else
+                        Notification_test(item.getSSID(), results);
+                    saveTime = 1;
+                    return;
                 }
             }
             //1당 15초 딜레이 2배씩 증가
             delay();
-            SetSetting(initData, lastSSID);
+            if(flag) {
+                Log.e(TAG,"주변에 와이파이가 없음");
+                SetSetting(initData, lastSSID);
+                Notification("없음");
+                flag = false;
+            }
         }
     }
+
     private void delay(){
         saveTime *= 2;
         if(saveTime > 20)
             saveTime = 20;
     }
+
     private void resetDataInit() {
         AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         BluetoothAdapter blueAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -171,6 +201,7 @@ public class SystemService extends Service {
             BrightSet(data_state.getBright_Size());
         }
     }
+
     private void WifiConnetion(String ssid){
         Log.e(TAG, "WifiConnection");
         wm.setWifiEnabled(true);
@@ -209,7 +240,38 @@ public class SystemService extends Service {
         Log.e(TAG, "Bright");
         Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, size);
     }
+    private void Notification_test(String ssid, ArrayList<WifiData> itemList){
+        ArrayList<String> ssidList = new ArrayList<>();
+        for(int j = 0; j<itemList.size(); j++){ //SSID 중복 제거 (맥주소 통일화)
+            WifiData item = itemList.get(j);
+            if(item.getSSID().equals(""))
+                continue;
+            ssidList.add(item.getSSID());
+        }
+        ArrayList<String> wifilist = new ArrayList(new HashSet(ssidList));
+        for(int i = 0; i< wifilist.size(); i++){
+            Log.e(TAG,"Noti value :  " + wifilist.get(i));
+        }
+        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        // 알림 객체 생성
+        Notification noti = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.cogwheel_1)
+                .setTicker("실행 중")
+                .setContentTitle("WIFI Change - '" + ssid + "'") //와이파이 ssid값 뽑아야
+                 .setContentText("다른 '" + (wifilist.size()-1) +"' 개 존재합니다." +
+                         "\n변경을 원하시면 아래 버튼을 눌러주십시오.") //와이파이 name 뽑아야
+                .setWhen(System.currentTimeMillis())
+                .build();
 
+        // 알림 방식 지정
+        //TODO 설정값에 다른 사운드
+        if(true)
+            noti.defaults |= Notification.DEFAULT_SOUND;
+        //noti.flags |= Notification.FLAG_AUTO_CANCEL;
+        noti.flags = Notification.FLAG_NO_CLEAR;
+        nm.notify(100, noti);
+
+    }
     private void Notification(String ssid){
         NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         // 알림 객체 생성
@@ -225,9 +287,10 @@ public class SystemService extends Service {
         //TODO 설정값에 다른 사운드
         if(true)
             noti.defaults |= Notification.DEFAULT_SOUND;
-
-        noti.flags |= Notification.FLAG_AUTO_CANCEL;
+        noti.flags = Notification.FLAG_NO_CLEAR;
+       // noti.flags |= Notification.FLAG_AUTO_CANCEL;
         nm.notify(100, noti);
+
     }
 
     @Override
