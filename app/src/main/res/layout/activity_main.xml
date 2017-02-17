@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.nammu.smartwifi.activity.MainActivity">
+    tools:context="com.nammu.smartwifi.UI.setlist.MainActivity">
 
     <LinearLayout
         android:orientation="vertical"
@@ -29,10 +29,10 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                app:srcCompat="@drawable/cogwheel_1"
+                app:srcCompat="@drawable/delete_list"
                 android:drawingCacheQuality="auto"
                 android:layout_gravity="right"
-                android:id="@+id/iv_toolbar"
+                android:id="@+id/iv_main_toolbar"
                 android:layout_marginRight="10dp"/>
         </android.support.v7.widget.Toolbar>
 

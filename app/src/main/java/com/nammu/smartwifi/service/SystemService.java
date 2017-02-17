@@ -18,11 +18,12 @@ import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
 import com.nammu.smartwifi.R;
-import com.nammu.smartwifi.interfaces.OnInterface;
-import com.nammu.smartwifi.object.WifiScan;
+import com.nammu.smartwifi.model.OnInterface;
+import com.nammu.smartwifi.model.SLog;
+import com.nammu.smartwifi.model.WifiScan;
 import com.nammu.smartwifi.realmdb.RealmDB;
-import com.nammu.smartwifi.realmdb.WifiData;
-import com.nammu.smartwifi.realmdb.WifiData_State;
+import com.nammu.smartwifi.realmdb.realmobject.WifiData;
+import com.nammu.smartwifi.realmdb.realmobject.WifiData_State;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,7 +38,6 @@ import io.realm.Realm;
  */
 
 public class SystemService extends Service {
-    private String TAG = "##### Service";
     private WifiManager wm;
     private WifiScan wifiScan;
     private Handler scanHandler;
@@ -88,10 +88,6 @@ public class SystemService extends Service {
             };
             Collections.sort(scanList, comparator);
 
-            //TODO 삭제
-            /*for(int i = 0; i < scanList.size(); i++)
-                Log.e(TAG, scanList.get(i).toString());*/
-
             for(int i = 0; i < size; i++) {
                 sr = scanList.get(i);
                 WifiData itemResult = realm.where(WifiData.class).equalTo("SSID", sr.SSID).equalTo("isPlay", true).findFirst();
@@ -100,13 +96,12 @@ public class SystemService extends Service {
                 //또는 현재 연결된 와이파이가 맞다면
                 if (itemResult == null)
                     continue;
-               /* if(itemResult.getisPlay() == false)
-                    continue;*/
+
                 String bssid = itemResult.getBSSID();
                 String[] bssids = bssid.split("@");
                 for(int j = 0; j < bssids.length; j++) {
                     if (sr.BSSID.equals(bssids[j])) {
-                        Log.e(TAG, "Set List : " + itemResult.getSSID() + ", " + itemResult.getPripority() + sr.level);
+                        SLog.d("Set List : " + itemResult.getSSID() + ", " + itemResult.getPripority() + sr.level);
                         results.add(itemResult);
                         break;
                     }
@@ -121,16 +116,21 @@ public class SystemService extends Service {
                     }
                 };
                 Collections.sort(results, comparatorPripority);
+
                 for(int i = 0; i< results.size(); i++){
                     WifiData item = results.get(i);
-                    Log.e(TAG, "data : " + item.getSSID() + " : " + item.getPripority());
+                    SLog.d("data : " + item.getSSID() + " : " + item.getPripority());
                 }
                 for(int i = 0 ; i < results.size(); i++) {
                     WifiData item = results.get(i);
-                    Log.e(TAG, "연결된 와이파이 이름 " + wm.getConnectionInfo().getSSID() + " : " + "\"" + item.getSSID() + "\"" + " : " + wm.getConnectionInfo().getSSID().equals("\"" + item.getSSID() + "\""));
-                    if (wm.getConnectionInfo().getSSID().equals("\"" + item.getSSID() + "\"") && flag) {
-                        Log.e(TAG, "이미 연결됨 " + wm.getConnectionInfo().getSSID() + " : " + item.getSSID());
+                   if (wm.getConnectionInfo().getSSID().equals("\"" + item.getSSID() + "\"") && flag) {
+                        SLog.d("이미 연결됨 " + wm.getConnectionInfo().getSSID() + " : " + item.getSSID());
                         delay();
+                        return;
+                    }
+                    if(!(wm.getConnectionInfo().getSSID().equals("\"" + item.getSSID() + "\"")) && flag){
+                        //TODO 사용자가 직접 변경?
+                        SLog.d("너가 변경했냐?");
                         return;
                     }
 
@@ -152,7 +152,7 @@ public class SystemService extends Service {
             //1당 15초 딜레이 2배씩 증가
             delay();
             if(flag) {
-                Log.e(TAG,"주변에 와이파이가 없음");
+                SLog.d("주변에 와이파이가 없음");
                 SetSetting(initData, lastSSID);
                 Notification("없음");
                 flag = false;
@@ -187,7 +187,7 @@ public class SystemService extends Service {
 
     private void SetSetting(WifiData_State data_state, String ssid){
         lastSSID = ssid;
-        Log.e(TAG, "SetSetting : " + data_state.getWifi_State() + " : " +  data_state.getBluetooth_State() +" : "+ data_state.getSound_State() + " : " + data_state.getBright_State());
+        SLog.d("SetSetting : " + data_state.getWifi_State() + " : " +  data_state.getBluetooth_State() +" : "+ data_state.getSound_State() + " : " + data_state.getBright_State());
         if(data_state.getWifi_State()){
             WifiConnetion(ssid);
         }
@@ -202,8 +202,9 @@ public class SystemService extends Service {
         }
     }
 
+    //TODO 대기시간
     private void WifiConnetion(String ssid){
-        Log.e(TAG, "WifiConnection");
+        SLog.d("WifiConnection");
         wm.setWifiEnabled(true);
         List<WifiConfiguration> list = wm.getConfiguredNetworks();
         try {
@@ -225,19 +226,19 @@ public class SystemService extends Service {
     }
 
     private void BluetoothConnection(){
-        Log.e(TAG, "Blue");
+        SLog.d("Blue");
         BluetoothAdapter blueAdapter = BluetoothAdapter.getDefaultAdapter();
         blueAdapter.enable();
     }
 
     private void SoundSet(int size){
-        Log.e(TAG, "Sound");
+        SLog.d("Sound");
         AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, size, AudioManager.FLAG_PLAY_SOUND);
     }
 
     private void BrightSet(int size){
-        Log.e(TAG, "Bright");
+        SLog.d("Bright");
         Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, size);
     }
     private void Notification_test(String ssid, ArrayList<WifiData> itemList){
@@ -250,16 +251,15 @@ public class SystemService extends Service {
         }
         ArrayList<String> wifilist = new ArrayList(new HashSet(ssidList));
         for(int i = 0; i< wifilist.size(); i++){
-            Log.e(TAG,"Noti value :  " + wifilist.get(i));
+            SLog.d("Noti value :  " + wifilist.get(i));
         }
         NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         // 알림 객체 생성
         Notification noti = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.cogwheel_1)
                 .setTicker("실행 중")
-                .setContentTitle("WIFI Change - '" + ssid + "'") //와이파이 ssid값 뽑아야
-                 .setContentText("다른 '" + (wifilist.size()-1) +"' 개 존재합니다." +
-                         "\n변경을 원하시면 아래 버튼을 눌러주십시오.") //와이파이 name 뽑아야
+                .setContentTitle("WIFI Change - '" + ssid + "'")
+                .setContentText("다른 '" + (wifilist.size()-1) +"' 개 존재합니다.")
                 .setWhen(System.currentTimeMillis())
                 .build();
 

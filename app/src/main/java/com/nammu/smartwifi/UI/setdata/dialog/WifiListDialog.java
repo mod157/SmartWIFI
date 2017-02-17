@@ -1,4 +1,4 @@
-package com.nammu.smartwifi.dialog;
+package com.nammu.smartwifi.UI.setdata.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -6,13 +6,13 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.WindowManager;
 
 import com.nammu.smartwifi.R;
-import com.nammu.smartwifi.adapter.WifiListAdatper;
-import com.nammu.smartwifi.interfaces.OnInterface;
-import com.nammu.smartwifi.object.WifiList_Item;
+import com.nammu.smartwifi.UI.setdata.WifiListAdatper;
+import com.nammu.smartwifi.UI.setdata.domain.WifiList_Item;
+import com.nammu.smartwifi.UI.setdata.interfaces.SetInterfaces;
+import com.nammu.smartwifi.model.SLog;
 
 import java.util.ArrayList;
 
@@ -29,9 +29,9 @@ public class WifiListDialog extends Dialog {
     Context context;
     ArrayList<WifiList_Item> wifi_List;
     Activity activity;
-    OnInterface.WifiListClickListener listener;
+    SetInterfaces.WifiListClickListener listener;
 
-    public WifiListDialog(Context context, ArrayList<WifiList_Item> list, Activity activity, OnInterface.WifiListClickListener listener) {
+    public WifiListDialog(Context context, ArrayList<WifiList_Item> list, Activity activity, SetInterfaces.WifiListClickListener listener) {
         super(context);
         this.context = context;
         wifi_List = list;
@@ -55,7 +55,7 @@ public class WifiListDialog extends Dialog {
     private void ListView(){
         rv_wifiList.setLayoutManager(new LinearLayoutManager(activity));
         WifiListAdatper adapter = new WifiListAdatper(wifi_List, listener);
-        Log.e("##### WIfiListAdapter", "size : " + adapter.getItemCount());
+        SLog.d("size : " + adapter.getItemCount());
         rv_wifiList.setAdapter(adapter);
     }
 }

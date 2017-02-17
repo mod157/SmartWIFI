@@ -20,23 +20,17 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".activity.MainActivity"></activity>
-        <activity
-            android:name=".activity.SetActivity"
-            android:parentActivityName=".activity.MainActivity" />
-        <activity android:name=".activity.InitActivity">
+        <activity android:name=".UI.setlist.MainActivity"></activity>
+        <activity android:name=".UI.permission.InitActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <activity android:name=".UI.setdata.SetActivity"/>
         <service android:name=".service.SystemService" />
-
         <receiver android:name=".broadcast.broadCastReceiver" />
-
-        <activity android:name=".activity.SettingActivity"></activity>
     </application>
 
 </manifest>

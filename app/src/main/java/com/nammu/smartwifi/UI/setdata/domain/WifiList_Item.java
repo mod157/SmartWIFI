@@ -1,4 +1,4 @@
-package com.nammu.smartwifi.object;
+package com.nammu.smartwifi.UI.setdata.domain;
 
 /**
  * Created by SunJae on 2017-02-13.

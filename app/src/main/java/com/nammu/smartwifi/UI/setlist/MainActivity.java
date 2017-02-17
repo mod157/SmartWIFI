@@ -1,4 +1,4 @@
-package com.nammu.smartwifi.activity;
+package com.nammu.smartwifi.UI.setlist;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,15 +6,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.nammu.smartwifi.R;
-import com.nammu.smartwifi.adapter.ItemAdapter;
+import com.nammu.smartwifi.UI.setdata.SetActivity;
+import com.nammu.smartwifi.model.SLog;
+import com.nammu.smartwifi.model.ServiceCheck;
 import com.nammu.smartwifi.realmdb.RealmDB;
-import com.nammu.smartwifi.realmdb.WifiData;
-import com.nammu.smartwifi.realmdb.WifiData_State;
+import com.nammu.smartwifi.realmdb.realmobject.WifiData;
+import com.nammu.smartwifi.realmdb.realmobject.WifiData_State;
 import com.nammu.smartwifi.service.SystemService;
 
 import java.util.ArrayList;
@@ -26,12 +27,16 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity {
-    private String TAG = "##### SmartWIFI MAIN";
     public static boolean VIEW_EDIT = false;
     private ArrayList<WifiData> itemList = new ArrayList<>();
     private long backKeyTime = 0;
     @BindView(R.id.Rec_WifiList)
     RecyclerView recyclerView;
+    @OnClick(R.id.iv_main_toolbar)
+    public void toolbarClick(View view){
+        //TODO 리스트 삭제형으로 변경
+
+    }
 
     @OnClick(R.id.fab)
     public void fabClick(View view){
@@ -51,8 +56,11 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
         ListView();
-        Intent intent = new Intent(this, SystemService.class);
-        startService(intent);
+        if(ServiceCheck.isServiceRunningCheck(this)) {
+            SLog.d("Service Start");
+            Intent intent = new Intent(this, SystemService.class);
+            startService(intent);
+        }
     }
 
     //TODO 삭제
@@ -60,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         Realm realm2 = RealmDB.RealmInit(this);
         RealmResults<WifiData> itemResult = realm2.where(WifiData.class).findAll();
         RealmResults<WifiData_State> itemResult2 = realm2.where(WifiData_State.class).findAll();
-        Log.e(TAG, "List : " + itemResult.toString()+"\n"+itemResult2.toString());
+        SLog.d("List : " + itemResult.toString()+"\n"+itemResult2.toString());
     }
 
     private void ListView(){
@@ -71,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
             WifiData itemData = itemResult.get(i);
             itemList.add(itemData);
         }
-        ItemAdapter adapter = new ItemAdapter(itemList, R.layout.recycler_item_layout,this);
+        ItemAdapter adapter = new ItemAdapter(itemList,this);
         recyclerView.setAdapter(adapter);
     }
 

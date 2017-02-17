@@ -3,6 +3,9 @@ package com.nammu.smartwifi.realmdb;
 import android.content.Context;
 import android.util.Log;
 
+import com.nammu.smartwifi.realmdb.realmobject.WifiData;
+import com.nammu.smartwifi.realmdb.realmobject.WifiData_State;
+
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 

@@ -4,8 +4,7 @@
     android:id="@+id/activity_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/backgray">
+    android:orientation="vertical">
 
     <ScrollView
         android:layout_width="match_parent"

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent"
-    tools:context="com.nammu.smartwifi.activity.SetActivity">
+    tools:context="com.nammu.smartwifi.UI.setdata.SetActivity">
     <android.support.v7.widget.Toolbar
         android:id="@+id/set_toolbar"
         android:layout_width="match_parent"
@@ -20,13 +20,13 @@
             android:id="@+id/iv_toolbar"
             android:layout_marginRight="10dp"
             android:visibility="gone"
-            app:srcCompat="@drawable/ecologism" />
+            app:srcCompat="@drawable/arrows" />
     </android.support.v7.widget.Toolbar>
     <fragment
         android:id="@+id/fragment_set"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:name="com.nammu.smartwifi.fragment.SetFragment"
+        android:name="com.nammu.smartwifi.UI.setdata.fragment.SetFragment"
         android:layout_weight="1"/>
 
 </LinearLayout>

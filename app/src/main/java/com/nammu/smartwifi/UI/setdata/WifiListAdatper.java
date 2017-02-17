@@ -1,8 +1,6 @@
-package com.nammu.smartwifi.adapter;
+package com.nammu.smartwifi.UI.setdata;
 
-import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,8 +8,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nammu.smartwifi.R;
-import com.nammu.smartwifi.interfaces.OnInterface;
-import com.nammu.smartwifi.object.WifiList_Item;
+import com.nammu.smartwifi.UI.setdata.domain.WifiList_Item;
+import com.nammu.smartwifi.UI.setdata.interfaces.SetInterfaces;
+import com.nammu.smartwifi.model.SLog;
 
 import java.util.ArrayList;
 
@@ -24,11 +23,10 @@ import butterknife.OnClick;
  */
 
 public class WifiListAdatper extends RecyclerView.Adapter<WifiListAdatper.ViewHolder>  {
-    private OnInterface.WifiListClickListener wifiListClickListener;
+    private SetInterfaces.WifiListClickListener wifiListClickListener;
     ArrayList<WifiList_Item> wifiList_Data;
-    Activity activity;
-    public WifiListAdatper(ArrayList<WifiList_Item> wifiList_Data, OnInterface.WifiListClickListener listener){
-        Log.e("##### WIFIAdapter", "Create");
+    public WifiListAdatper(ArrayList<WifiList_Item> wifiList_Data, SetInterfaces.WifiListClickListener listener){
+        SLog.d("Create");
         this.wifiList_Data = wifiList_Data;
         wifiListClickListener = listener;
     }
@@ -42,9 +40,8 @@ public class WifiListAdatper extends RecyclerView.Adapter<WifiListAdatper.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         WifiList_Item item = wifiList_Data.get(position);
-        Log.e("##### WIFIAdapter", "String : ["+ position + "]\n" + item.getSSID()+"\n"+ item.getBSSID()+"\n"+(item.getLevel()/10) + item.getSave());
+        SLog.d("String : ["+ position + "]\n" + item.getSSID()+"\n"+ item.getBSSID()+"\n"+(item.getLevel()/10) + item.getSave());
         holder.tv_dialog_ssid.setText(item.getSSID()+"     ");
-        //TODo 세기 마다 글자 색 변경? 표시;
         switch ((item.getLevel())/10){
             case -6:
             case -7:

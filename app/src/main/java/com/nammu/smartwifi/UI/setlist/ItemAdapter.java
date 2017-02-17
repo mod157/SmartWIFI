@@ -1,7 +1,8 @@
-package com.nammu.smartwifi.adapter;
+package com.nammu.smartwifi.UI.setlist;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,11 +12,10 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.nammu.smartwifi.R;
-import com.nammu.smartwifi.activity.MainActivity;
-import com.nammu.smartwifi.activity.SetActivity;
-import com.nammu.smartwifi.dialog.RecyclerMenuDialog;
+import com.nammu.smartwifi.UI.setdata.SetActivity;
+import com.nammu.smartwifi.UI.setlist.dialog.RecyclerMenuDialog;
 import com.nammu.smartwifi.realmdb.RealmDB;
-import com.nammu.smartwifi.realmdb.WifiData;
+import com.nammu.smartwifi.realmdb.realmobject.WifiData;
 
 import java.util.ArrayList;
 
@@ -31,12 +31,10 @@ import butterknife.OnLongClick;
 
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
     ArrayList<WifiData> itemList;
-    int layout;
     Context context;
 
-    public ItemAdapter(ArrayList<WifiData> list, int layout, Context context){
+    public ItemAdapter(ArrayList<WifiData> list, Context context){
         itemList = list;
-        this.layout = layout;
         this.context = context;
     }
 
@@ -49,6 +47,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
     @Override
     public void onBindViewHolder(ItemAdapter.ViewHolder holder, int position) {
             WifiData item = itemList.get(position);
+        if(!item.getisPlay()) {
+            holder.tv_wifiName.setTextColor(Color.GRAY);
+        }
             holder.tv_wifiName.setText(item.getName());
             holder.tv_wifiSSID.setText(item.getSSID());
             holder.sw_wifistate.setChecked(item.getisPlay());
@@ -71,6 +72,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
 
         @OnCheckedChanged(R.id.sw_item)
         public void checkedChange(CompoundButton compoundButton, boolean isCheck) {
+            if(isCheck)
+                tv_wifiName.setTextColor(Color.parseColor("#000000"));
+            else
+                tv_wifiName.setTextColor(Color.GRAY);
             isWifi_state(isCheck);
         }
 

@@ -1,4 +1,4 @@
-package com.nammu.smartwifi.realmdb;
+package com.nammu.smartwifi.realmdb.realmobject;
 
 import android.os.Parcel;
 import android.os.Parcelable;

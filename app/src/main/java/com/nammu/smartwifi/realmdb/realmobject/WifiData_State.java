@@ -1,4 +1,4 @@
-package com.nammu.smartwifi.realmdb;
+package com.nammu.smartwifi.realmdb.realmobject;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;

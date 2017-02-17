@@ -1,8 +1,9 @@
-package com.nammu.smartwifi.fragment;
+package com.nammu.smartwifi.UI.setdata.fragment;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
@@ -10,7 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,12 +20,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nammu.smartwifi.R;
-import com.nammu.smartwifi.activity.MainActivity;
-import com.nammu.smartwifi.dialog.WifiListDialog;
-import com.nammu.smartwifi.interfaces.OnInterface;
-import com.nammu.smartwifi.object.WifiList_Item;
-import com.nammu.smartwifi.object.WifiScan;
-import com.nammu.smartwifi.realmdb.WifiData;
+import com.nammu.smartwifi.UI.setdata.domain.WifiList_Item;
+import com.nammu.smartwifi.UI.setdata.dialog.WifiListDialog;
+import com.nammu.smartwifi.UI.setdata.interfaces.SetInterfaces;
+import com.nammu.smartwifi.UI.setdata.interfaces.SetInterfaces.OnChangedListener;
+import com.nammu.smartwifi.UI.setlist.MainActivity;
+import com.nammu.smartwifi.model.OnInterface;
+import com.nammu.smartwifi.model.SLog;
+import com.nammu.smartwifi.model.WifiScan;
+import com.nammu.smartwifi.realmdb.realmobject.WifiData;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,11 +45,10 @@ import butterknife.OnClick;
  */
 
 public class SetFragment extends Fragment {
-    private final String TAG = "##### SetFragment";
     private String bssid = "";
     private WifiListDialog listDialog;
     private WifiData data = new WifiData();
-    OnInterface.OnChangedListener mCallback;
+    OnChangedListener mCallback;
     private WifiManager wm;
     private List<WifiConfiguration> configNetworkList;
     private boolean wifi_state;
@@ -73,7 +75,7 @@ public class SetFragment extends Fragment {
             @Override
             public void run() {
                 while(true){
-                    Log.e(TAG,"list DIalog is state : " + (listDialog != null));
+                    SLog.d("list DIalog is state : " + (listDialog != null));
                     if(listDialog != null && configNetworkList != null) {
                         handler.sendEmptyMessage(0);
                         progressDialog.dismiss();
@@ -94,14 +96,12 @@ public class SetFragment extends Fragment {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             listDialog.show();
-            //Intent intent = new Intent(getContext(), WifiListDialog.class);
-           // startActivity(intent);
         }
     };
 
     @OnClick(R.id.btn_set_Success)
     public void SetButtonClick(View view){
-        Log.e(TAG,"Button Click");
+        SLog.d("Button Click");
         if(isChecking()) {
             mCallback.onChangeFragment(data);
         }
@@ -118,7 +118,7 @@ public class SetFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
         View view = inflater.inflate( R.layout.fragment_set, container, false);
-        Log.e(TAG, "CreateView");
+        SLog.d("CreateView");
         set_Context = view.getContext();
         ButterKnife.bind(this, view);
 
@@ -126,18 +126,19 @@ public class SetFragment extends Fragment {
         if(MainActivity.VIEW_EDIT) {
             Bundle bundle = getArguments();
             if (bundle != null) {
-                Log.e(TAG, "Bundler get Parcelable");
+                SLog.d("Bundler get Parcelable");
                 data = bundle.getParcelable("WifiData_Bundle");
-                Log.e(TAG,data.getName() + data.getSSID() + data.getBSSID());
+                SLog.d(data.getName() + data.getSSID() + data.getBSSID());
                 bssid = data.getBSSID();
                 tv_add_WifiName.setText(data.getSSID());
                 et_add_name.setText(data.getName());
                 sb_add_Priority.setProgress(data.getPripority());
+                tv_add_WifiName.setTextColor(Color.GRAY);
             }
         }else{
             initWifiScan();
         }
-        Log.e(TAG,"Scan 이후");
+        SLog.d("Scan 이후");
         return view;
     }
 
@@ -151,12 +152,12 @@ public class SetFragment extends Fragment {
 
     private boolean isChecking(){
         if(et_add_name.getText().toString().equals("")){
-            Log.e(TAG,"'name' no edit");
+            SLog.d("'name' no edit");
             Toast.makeText(set_Context,"이름을 입력해주십시오.",Toast.LENGTH_SHORT).show();
             return false;
         }
         if(tv_add_WifiName.getText().toString().equals("")){
-            Log.e(TAG,"Wifi no select");
+            SLog.d("Wifi no select");
             Toast.makeText(set_Context,"Wifi를 선택해주십시오.",Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -174,12 +175,12 @@ public class SetFragment extends Fragment {
 
     // wifi 스캔 후에 스캔 한 갯수만큼 출력하기
     public void searchWifiList(List<ScanResult> scanList) {
-        Log.e(TAG, "ScanList");
+        SLog.d("ScanList");
         int size;
         List setList = null;
         List apList = scanList;
         if ((size = apList.size()) != 0) {
-            Log.e(TAG, size + "");
+            SLog.d(size + "");
             List list = new ArrayList();
             for(int j = 0; j<apList.size(); j++){ //SSID 중복 제거 (맥주소 통일화)
                 ScanResult sr2 = (ScanResult) apList.get(j);
@@ -206,20 +207,20 @@ public class SetFragment extends Fragment {
 
     private ArrayList<WifiList_Item> SortList(ArrayList<WifiList_Item> item){
         ArrayList<WifiList_Item> tempList = item;
+
+        // 내림 차순 정렬
         ArrayList<WifiList_Item> sortList = new ArrayList<>();
+        DescendingObj descending = new DescendingObj();
+        Collections.sort(tempList, descending);
         for(int i = 0; i < tempList.size(); i++){
-            Log.e(TAG+ " " + tempList.size() + " : " + item.size(),"list item : " + tempList.get(i).getSSID() + " : " + tempList.get(i).getSave());
-            if(tempList.get(i).getSave()){
-                Log.e(TAG,"OK save : " + tempList.get(i).getSSID());
+           if(tempList.get(i).getSave()){
+                SLog.d("OK save : " + tempList.get(i).getSSID());
                 sortList.add(tempList.get(i));
                 tempList.remove(i--);
             }
         }
-        // 내림 차순 정렬
-        DescendingObj descending = new DescendingObj();
-        Collections.sort(tempList, descending);
         sortList.addAll(sortList.size(),tempList);
-        Log.e(TAG,"sortList size : " + sortList.size());
+        SLog.d("sortList size : " + sortList.size());
         return sortList;
     }
 
@@ -259,33 +260,24 @@ public class SetFragment extends Fragment {
     private boolean checkingSaveWifi(List<WifiConfiguration> configNetworkList,String scanSSID){
         try {
             if (configNetworkList.isEmpty()) {
-                Log.v(TAG, "저장된 list가 빔");
+                SLog.d("저장된 list가 빔");
             }
 
             for (WifiConfiguration i : configNetworkList) {
                 if (i.SSID != null && i.SSID.equals("\"" + scanSSID + "\"")) {
-                    Log.e(TAG, "SSID : " + i.SSID + ", BSSID" + i.BSSID);
+                    SLog.d("SSID : " + i.SSID + ", BSSID" + i.BSSID);
                     return true;
                 }
             }
             return false;
         }catch(NullPointerException e){
-            Log.e(TAG, ""+e.toString());
+            SLog.d(""+e.toString());
             checkingSaveWifi(configNetworkList, scanSSID);
             return false;
         }
     }
 
-    private List<WifiConfiguration> getConfiguredNetworks() {
-        try {
-            return wm.getConfiguredNetworks();
-        } catch (Exception e) {
-           e.printStackTrace();
-        }
-        return null;
-    }
-
-    public OnInterface.WifiListClickListener wifiListClickListener = new OnInterface.WifiListClickListener() {
+    public SetInterfaces.WifiListClickListener wifiListClickListener = new SetInterfaces.WifiListClickListener() {
         @Override
         public void WifiListClick(WifiList_Item item) {
             tv_add_WifiName.setText(item.getSSID());
@@ -298,26 +290,27 @@ public class SetFragment extends Fragment {
     public OnInterface.WifiScanResultInterface wifiScanResultInterface = new OnInterface.WifiScanResultInterface() {
         @Override
         public void setScanResult(List<ScanResult> list) {
-            Log.e(TAG, "Interface Result");
+            SLog.d("Interface Result");
             searchWifiList(list);
         }
     };
+
     @Override
     public void onResume(){
         super.onResume();
-        Log.e(TAG, "Resume");
+        SLog.d("Resume");
     }
     @Override
     public void onDestroy(){
         super.onDestroy();
-        Log.e(TAG,"destroy");
+        SLog.d("destroy");
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mCallback = (OnInterface.OnChangedListener) activity;
+            mCallback = (OnChangedListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString());
         }

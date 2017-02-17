@@ -1,15 +1,12 @@
-package com.nammu.smartwifi.fragment;
+package com.nammu.smartwifi.UI.setdata.fragment;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,18 +14,17 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import com.nammu.smartwifi.R;
-import com.nammu.smartwifi.activity.MainActivity;
-import com.nammu.smartwifi.interfaces.OnInterface;
+import com.nammu.smartwifi.UI.setlist.MainActivity;
+import com.nammu.smartwifi.model.SLog;
 import com.nammu.smartwifi.realmdb.RealmDB;
-import com.nammu.smartwifi.realmdb.WifiData;
-import com.nammu.smartwifi.realmdb.WifiData_State;
+import com.nammu.smartwifi.realmdb.realmobject.WifiData;
+import com.nammu.smartwifi.realmdb.realmobject.WifiData_State;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,7 +38,6 @@ import io.realm.Realm;
 
 
 public class DetailSetFragment extends Fragment  {
-    private String TAG = "##### SmartWIFI detail";
     private final int WIFI_STATE = 0;
     private final int BLUETOOTH_STATE = 1;
     private final int SOUND_STATE = 2;
@@ -53,7 +48,6 @@ public class DetailSetFragment extends Fragment  {
     private AudioManager audioManager;
     private int init_system_Sound;
     private Context detail_Context;
-    private OnInterface.ToolbarImageVisible callback;
 
     @BindView(R.id.linear_sound)
     LinearLayout linear_sound;
@@ -102,7 +96,7 @@ public class DetailSetFragment extends Fragment  {
                     linear_bright.setVisibility(View.GONE);
                 break;
         }
-        Log.e(TAG, "setting value : "  + setting_state.toString());
+        SLog.d("setting value : "  + setting_state.toString());
     }
 
     @OnClick(R.id.btn_detail_Success)
@@ -153,10 +147,13 @@ public class DetailSetFragment extends Fragment  {
         View view = inflater.inflate( R.layout.fragment_detail, container, false );
         ButterKnife.bind(this, view);
         detail_Context = view.getContext();
-        Log.e(TAG,"Crete OK");
+        audioManager = (AudioManager) detail_Context.getSystemService(Context.AUDIO_SERVICE);
+        init_system_Sound = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+        sb_sound.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM));
+        SLog.d("Crete OK");
         Bundle bundle = getArguments();
         if (bundle != null) {
-            Log.e(TAG, "Bundler get Parcelable");
+            SLog.d("Bundler get Parcelable");
             data = bundle.getParcelable("WifiData_Bundle");
         }
         if (MainActivity.VIEW_EDIT) {
@@ -165,18 +162,14 @@ public class DetailSetFragment extends Fragment  {
             SetCurrentStatus();
         }
 
-        audioManager = (AudioManager) detail_Context.getSystemService(Context.AUDIO_SERVICE);
-        init_system_Sound = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-        sb_sound.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM));
+
         ChangeAudio();
         ChangeBright();
         return view;
     }
 
     private void EditStatus(){
-        Log.e(TAG,data.getSSID() + " : " + data.getBSSID());
-        audioManager = (AudioManager) detail_Context.getSystemService(Context.AUDIO_SERVICE);
-        init_system_Sound = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+        SLog.d(data.getSSID() + " : " + data.getBSSID());
         Realm realm = RealmDB.RealmInit(getContext());
         WifiData_State state = realm.where(WifiData_State.class).equalTo("BSSID", data.getBSSID()).findFirst();
         try {
@@ -205,17 +198,15 @@ public class DetailSetFragment extends Fragment  {
                 sb_bright.setProgress(state.getBright_Size());
                 tv_bright_state_value.setText(((float) (state.getBright_Size()) / 250) * 100 + "%");
             }
+
         }catch(Exception e){
-            Log.e(TAG, "realm error");
+            SLog.d("realm error");
             e.printStackTrace();
         }
     }
 
     //현재 상태
     private void  SetCurrentStatus() {
-        audioManager = (AudioManager) detail_Context.getSystemService(Context.AUDIO_SERVICE);
-        init_system_Sound = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-
         BluetoothAdapter blueAdapter = BluetoothAdapter.getDefaultAdapter();
         if (blueAdapter == null) {
             sw_bluetooth.setChecked(false);
@@ -255,7 +246,7 @@ public class DetailSetFragment extends Fragment  {
             int bright = Settings.System.getInt(detail_Context.getContentResolver(),Settings.System.SCREEN_BRIGHTNESS);
             sb_bright.setProgress (bright);
             tv_bright_state_value.setText((float)bright/250 * 100 + "%");
-            Log.e(TAG, bright/250 * 100 + "%");
+            SLog.d(bright/250 * 100 + "%");
         } catch (Settings.SettingNotFoundException e) {
             e.printStackTrace();
         }
@@ -283,7 +274,7 @@ public class DetailSetFragment extends Fragment  {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
-                    Log.e(TAG, "진동 Check");
+                    SLog.d("진동 Check");
                     audioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
                     sb_sound.setProgress(0);
                     cb_sound_vibrate.setChecked(isChecked);
@@ -309,7 +300,6 @@ public class DetailSetFragment extends Fragment  {
                 //TODO 첫째자리만
                 tv_bright_state_value.setText(bright_value * 100 + "%");
 
-                //TODO 객체화
                 WindowManager.LayoutParams parms =  window.getAttributes();
                 parms.screenBrightness = bright_value;
                 parms.flags |= WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
@@ -327,16 +317,21 @@ public class DetailSetFragment extends Fragment  {
         });
     }
 
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            callback = (OnInterface.ToolbarImageVisible) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString());
-        }
+    public interface ResetFragmentListener{
+        public void updateView();
     }
+
+    ResetFragmentListener resetFragmentListener = new ResetFragmentListener() {
+        @Override
+        public void updateView() {
+            if (MainActivity.VIEW_EDIT) {
+                EditStatus();
+            }else{
+                SetCurrentStatus();
+            }
+        }
+    };
+
 
     @Override
     public void onResume(){
@@ -346,6 +341,5 @@ public class DetailSetFragment extends Fragment  {
     @Override
     public void onDestroy(){
         super.onDestroy();
-        callback.setToolbarimage();
     }
 }

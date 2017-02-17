@@ -1,4 +1,4 @@
-package com.nammu.smartwifi.object;
+package com.nammu.smartwifi.model;
 
 import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
@@ -9,8 +9,6 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.util.Log;
-
-import com.nammu.smartwifi.interfaces.OnInterface;
 
 import java.util.List;
 

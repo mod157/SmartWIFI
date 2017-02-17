@@ -1,4 +1,4 @@
-package com.nammu.smartwifi.activity;
+package com.nammu.smartwifi.UI.permission;
 
 import android.Manifest;
 import android.content.Intent;
@@ -12,10 +12,13 @@ import android.util.Log;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 import com.nammu.smartwifi.R;
+import com.nammu.smartwifi.UI.setlist.MainActivity;
 
 import java.util.ArrayList;
 
+
 public class InitActivity extends AppCompatActivity {
+    public static boolean LOG_STATE = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +47,7 @@ public class InitActivity extends AppCompatActivity {
             }
         }
     }
+
     private void PermissionCheck(){
         PermissionListener permissionListener = new PermissionListener() {
             @Override
