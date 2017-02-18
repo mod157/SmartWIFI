@@ -32,12 +32,15 @@ public class WifiScan {
     }
 
     public List<WifiConfiguration> configScan() {
-        if (wm.isWifiEnabled())
+        boolean wifiEnabled = wm.isWifiEnabled();
+        if (wifiEnabled)
             configNetworkList = getConfiguredNetworks();
         else {
             wm.setWifiEnabled(true);
             configNetworkList = getConfiguredNetworks();
         }
+        if(wm.isWifiEnabled() != wifiEnabled)
+            wm.setWifiEnabled(!wm.isWifiEnabled());
         return configNetworkList;
     }
 
@@ -88,5 +91,4 @@ public class WifiScan {
             }
         }
     };
-
 }

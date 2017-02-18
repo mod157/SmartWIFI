@@ -8,12 +8,10 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.nammu.smartwifi.R;
-import com.nammu.smartwifi.realmdb.RealmDB;
 import com.nammu.smartwifi.realmdb.realmobject.WifiData;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.realm.Realm;
 
 /**
  * Created by SunJae on 2017-02-11.
@@ -21,7 +19,6 @@ import io.realm.Realm;
 
 public class RecyclerMenuDialog extends Dialog {
     private WifiData data;
-    private Realm realm;
     private View.OnClickListener clickState;
     private View.OnClickListener clickEdit;
     private View.OnClickListener clickDelete;
@@ -37,7 +34,6 @@ public class RecyclerMenuDialog extends Dialog {
     public RecyclerMenuDialog(Context context, WifiData data, View.OnClickListener stateClickListener,
                               View.OnClickListener editClickListener, View.OnClickListener deleteClickListener ) {
         super(context);
-        realm = RealmDB.RealmInit(context);
         this.data = data;
         clickState = stateClickListener;
         clickEdit = editClickListener;

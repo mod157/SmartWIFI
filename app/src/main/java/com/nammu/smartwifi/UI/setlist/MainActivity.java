@@ -15,7 +15,7 @@ import com.nammu.smartwifi.model.SLog;
 import com.nammu.smartwifi.model.ServiceCheck;
 import com.nammu.smartwifi.realmdb.RealmDB;
 import com.nammu.smartwifi.realmdb.realmobject.WifiData;
-import com.nammu.smartwifi.realmdb.realmobject.WifiData_State;
+import com.nammu.smartwifi.realmdb.realmobject.WifiDataState;
 import com.nammu.smartwifi.service.SystemService;
 
 import java.util.ArrayList;
@@ -32,14 +32,15 @@ public class MainActivity extends AppCompatActivity {
     private long backKeyTime = 0;
     @BindView(R.id.Rec_WifiList)
     RecyclerView recyclerView;
+
     @OnClick(R.id.iv_main_toolbar)
-    public void toolbarClick(View view){
+    public void toolbarClick(View view) {
         //TODO 리스트 삭제형으로 변경
 
     }
 
     @OnClick(R.id.fab)
-    public void fabClick(View view){
+    public void fabClick(View view) {
         //리스트 보여주는 형태
         Intent intent = new Intent(MainActivity.this, SetActivity.class);
         VIEW_EDIT = false;
@@ -51,12 +52,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
         ListView();
-        if(ServiceCheck.isServiceRunningCheck(this)) {
+        if (ServiceCheck.isServiceRunningCheck(this)) {
             SLog.d("Service Start");
             Intent intent = new Intent(this, SystemService.class);
             startService(intent);
@@ -64,22 +65,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //TODO 삭제
-    public void testPrint(){
+    public void testPrint() {
         Realm realm2 = RealmDB.RealmInit(this);
         RealmResults<WifiData> itemResult = realm2.where(WifiData.class).findAll();
-        RealmResults<WifiData_State> itemResult2 = realm2.where(WifiData_State.class).findAll();
-        SLog.d("List : " + itemResult.toString()+"\n"+itemResult2.toString());
+        RealmResults<WifiDataState> itemResult2 = realm2.where(WifiDataState.class).findAll();
+        SLog.d("List : " + itemResult.toString() + "\n" + itemResult2.toString());
     }
 
-    private void ListView(){
+    private void ListView() {
         testPrint();
         Realm realm = RealmDB.RealmInit(this);
         RealmResults<WifiData> itemResult = realm.where(WifiData.class).findAll();
-        for(int i = 0; i<itemResult.size(); i++){
+        for (int i = 0; i < itemResult.size(); i++) {
             WifiData itemData = itemResult.get(i);
             itemList.add(itemData);
         }
-        ItemAdapter adapter = new ItemAdapter(itemList,this);
+        ItemAdapter adapter = new ItemAdapter(itemList, this);
         recyclerView.setAdapter(adapter);
     }
 

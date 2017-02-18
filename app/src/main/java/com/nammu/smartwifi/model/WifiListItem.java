@@ -1,10 +1,10 @@
-package com.nammu.smartwifi.UI.setdata.domain;
+package com.nammu.smartwifi.model;
 
 /**
  * Created by SunJae on 2017-02-13.
  */
 
-public class WifiList_Item {
+public class WifiListItem {
     String ssid;
     String bssid;
     int level;

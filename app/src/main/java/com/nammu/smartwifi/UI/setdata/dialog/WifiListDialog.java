@@ -10,8 +10,8 @@ import android.view.WindowManager;
 
 import com.nammu.smartwifi.R;
 import com.nammu.smartwifi.UI.setdata.WifiListAdatper;
-import com.nammu.smartwifi.UI.setdata.domain.WifiList_Item;
-import com.nammu.smartwifi.UI.setdata.interfaces.SetInterfaces;
+import com.nammu.smartwifi.model.WifiListItem;
+import com.nammu.smartwifi.UI.setdata.fragment.SetFragment;
 import com.nammu.smartwifi.model.SLog;
 
 import java.util.ArrayList;
@@ -27,11 +27,11 @@ public class WifiListDialog extends Dialog {
     @BindView(R.id.rv_wifiList)
     RecyclerView rv_wifiList;
     Context context;
-    ArrayList<WifiList_Item> wifi_List;
+    ArrayList<WifiListItem> wifi_List;
     Activity activity;
-    SetInterfaces.WifiListClickListener listener;
+    SetFragment.WifiListClickListener listener;
 
-    public WifiListDialog(Context context, ArrayList<WifiList_Item> list, Activity activity, SetInterfaces.WifiListClickListener listener) {
+    public WifiListDialog(Context context, ArrayList<WifiListItem> list, Activity activity, SetFragment.WifiListClickListener listener) {
         super(context);
         this.context = context;
         wifi_List = list;

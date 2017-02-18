@@ -97,6 +97,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
             intent.putExtra("Edit_WifiData", itemList.get(getPosition()));
             context.startActivity(intent);
         }
+
         @OnClick(R.id.linear_item)
         @Override
         public void onClick(View view) {

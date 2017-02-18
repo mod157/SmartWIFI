@@ -2,14 +2,12 @@ package com.nammu.smartwifi.model;
 
 import android.util.Log;
 
-import com.nammu.smartwifi.UI.permission.InitActivity;
-
 /**
  * Created by SunJae on 2017-02-17.
  */
 
 public class SLog {
-    private static boolean debug = InitActivity.LOG_STATE;
+    private static boolean debug = true;
     /** Log Level Error **/
 
     public static final void e(String message) {

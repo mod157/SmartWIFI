@@ -8,8 +8,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nammu.smartwifi.R;
-import com.nammu.smartwifi.UI.setdata.domain.WifiList_Item;
-import com.nammu.smartwifi.UI.setdata.interfaces.SetInterfaces;
+import com.nammu.smartwifi.model.WifiListItem;
+import com.nammu.smartwifi.UI.setdata.fragment.SetFragment;
 import com.nammu.smartwifi.model.SLog;
 
 import java.util.ArrayList;
@@ -23,9 +23,9 @@ import butterknife.OnClick;
  */
 
 public class WifiListAdatper extends RecyclerView.Adapter<WifiListAdatper.ViewHolder>  {
-    private SetInterfaces.WifiListClickListener wifiListClickListener;
-    ArrayList<WifiList_Item> wifiList_Data;
-    public WifiListAdatper(ArrayList<WifiList_Item> wifiList_Data, SetInterfaces.WifiListClickListener listener){
+    private SetFragment.WifiListClickListener wifiListClickListener;
+    private ArrayList<WifiListItem> wifiList_Data;
+    public WifiListAdatper(ArrayList<WifiListItem> wifiList_Data, SetFragment.WifiListClickListener listener){
         SLog.d("Create");
         this.wifiList_Data = wifiList_Data;
         wifiListClickListener = listener;
@@ -39,10 +39,16 @@ public class WifiListAdatper extends RecyclerView.Adapter<WifiListAdatper.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        WifiList_Item item = wifiList_Data.get(position);
+        WifiListItem item = wifiList_Data.get(position);
         SLog.d("String : ["+ position + "]\n" + item.getSSID()+"\n"+ item.getBSSID()+"\n"+(item.getLevel()/10) + item.getSave());
         holder.tv_dialog_ssid.setText(item.getSSID()+"     ");
-        switch ((item.getLevel())/10){
+        changeLevelImage(holder, item.getLevel()/10);
+        if(item.getSave())
+            holder.iv_dialog_save.setVisibility(View.VISIBLE);
+    }
+
+    private void changeLevelImage(ViewHolder holder, int level){
+        switch (level){
             case -6:
             case -7:
                 holder.iv_list_level.setBackgroundResource(R.drawable.shadow_border_level_normal);
@@ -55,10 +61,7 @@ public class WifiListAdatper extends RecyclerView.Adapter<WifiListAdatper.ViewHo
             default:
                 holder.iv_list_level.setBackgroundResource(R.drawable.shadow_border_level_good);
         }
-        if(item.getSave())
-            holder.iv_dialog_save.setVisibility(View.VISIBLE);
     }
-
     @Override
     public int getItemCount() {
         return wifiList_Data.size();

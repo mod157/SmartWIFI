@@ -8,7 +8,7 @@ import io.realm.annotations.Required;
  * Created by SunJae on 2017-02-08.
  */
 
-public class WifiData_State extends RealmObject{
+public class WifiDataState extends RealmObject{
     @PrimaryKey
     @Required
     private String BSSID;
@@ -22,30 +22,30 @@ public class WifiData_State extends RealmObject{
     public void setBSSID(String bssid){
         BSSID = bssid;
     }
-    public void setWifi_State(boolean wifi_state){
+    public void setWifiState(boolean wifi_state){
         Wifi_State = wifi_state;
     }
-    public void setBluetooth_State(boolean bluetooth_state){
+    public void setBluetoothState(boolean bluetooth_state){
         Bluetooth_State = bluetooth_state;
     }
-    public void setSound_State(boolean sound_state){
+    public void setSoundState(boolean sound_state){
         Sound_State = sound_state;
     }
-    public void setSound_Size(int sound_size){
+    public void setSoundSize(int sound_size){
         Sound_Size = sound_size;
     }
-    public void setBright_State(boolean bright_state){
+    public void setBrightState(boolean bright_state){
         Bright_State = bright_state;
     }
-    public void setBright_Size(int bright_size){
+    public void setBrightSize(int bright_size){
         Bright_Size = bright_size;
     }
 
     public String getBSSID(){return BSSID;}
-    public boolean getWifi_State(){return Wifi_State;}
-    public boolean getBluetooth_State(){return Bluetooth_State;}
-    public boolean getSound_State(){return Sound_State;}
-    public int getSound_Size(){return Sound_Size;}
-    public boolean getBright_State(){return Bright_State;}
-    public int getBright_Size(){return Bright_Size;}
+    public boolean getWifiState(){return Wifi_State;}
+    public boolean getBluetoothState(){return Bluetooth_State;}
+    public boolean getSoundState(){return Sound_State;}
+    public int getSoundSize(){return Sound_Size;}
+    public boolean getBrightState(){return Bright_State;}
+    public int getBrightSize(){return Bright_Size;}
 }

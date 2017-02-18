@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import com.nammu.smartwifi.R;
 import com.nammu.smartwifi.UI.setdata.fragment.DetailSetFragment;
 import com.nammu.smartwifi.UI.setdata.fragment.SetFragment;
-import com.nammu.smartwifi.UI.setdata.interfaces.SetInterfaces;
 import com.nammu.smartwifi.UI.setlist.MainActivity;
 import com.nammu.smartwifi.model.SLog;
 import com.nammu.smartwifi.realmdb.realmobject.WifiData;
@@ -19,7 +18,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class SetActivity extends AppCompatActivity implements SetInterfaces.OnChangedListener {
+public class SetActivity extends AppCompatActivity implements SetFragment.OnChangedListener {
     public static boolean isFrag = true;
     WifiData data;
     @BindView(R.id.iv_toolbar)
@@ -57,6 +56,7 @@ public class SetActivity extends AppCompatActivity implements SetInterfaces.OnCh
             resetFragmentListener.updateView();
         }
     }
+
 
     //Set -> Detail로 전환
     @Override

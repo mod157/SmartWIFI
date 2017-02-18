@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 
 public class InitActivity extends AppCompatActivity {
-    public static boolean LOG_STATE = true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -23,7 +23,7 @@ import com.nammu.smartwifi.model.SLog;
 import com.nammu.smartwifi.model.WifiScan;
 import com.nammu.smartwifi.realmdb.RealmDB;
 import com.nammu.smartwifi.realmdb.realmobject.WifiData;
-import com.nammu.smartwifi.realmdb.realmobject.WifiData_State;
+import com.nammu.smartwifi.realmdb.realmobject.WifiDataState;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,7 +43,7 @@ public class SystemService extends Service {
     private Handler scanHandler;
     private int saveTime = 1;
     private int scanTimer = 15000;
-    private WifiData_State initData;
+    private WifiDataState initData;
     private String lastSSID = "";
     private boolean flag = false;
 
@@ -52,7 +52,7 @@ public class SystemService extends Service {
         super.onCreate();
         wm = (WifiManager) getSystemService(WIFI_SERVICE);
         wifiScan = new WifiScan(this, wm, wifiScanResultInterface);
-        initData = new WifiData_State();
+        initData = new WifiDataState();
         scanHandler = new Handler();
         scanStart.run();
     }
@@ -138,7 +138,7 @@ public class SystemService extends Service {
                         resetDataInit();
 
                     flag = true;
-                    WifiData_State data_state = realm.where(WifiData_State.class).equalTo("BSSID", item.getBSSID()).findFirst();
+                    WifiDataState data_state = realm.where(WifiDataState.class).equalTo("BSSID", item.getBSSID()).findFirst();
                     SetSetting(data_state, item.getSSID());
                     //TODO noti set
                     if(results.size() == 1)
@@ -185,7 +185,7 @@ public class SystemService extends Service {
         }
     }
 
-    private void SetSetting(WifiData_State data_state, String ssid){
+    private void SetSetting(WifiDataState data_state, String ssid){
         lastSSID = ssid;
         SLog.d("SetSetting : " + data_state.getWifi_State() + " : " +  data_state.getBluetooth_State() +" : "+ data_state.getSound_State() + " : " + data_state.getBright_State());
         if(data_state.getWifi_State()){

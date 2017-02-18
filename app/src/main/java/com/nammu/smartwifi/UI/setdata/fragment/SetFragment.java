@@ -20,10 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nammu.smartwifi.R;
-import com.nammu.smartwifi.UI.setdata.domain.WifiList_Item;
 import com.nammu.smartwifi.UI.setdata.dialog.WifiListDialog;
-import com.nammu.smartwifi.UI.setdata.interfaces.SetInterfaces;
-import com.nammu.smartwifi.UI.setdata.interfaces.SetInterfaces.OnChangedListener;
+import com.nammu.smartwifi.model.WifiListItem;
 import com.nammu.smartwifi.UI.setlist.MainActivity;
 import com.nammu.smartwifi.model.OnInterface;
 import com.nammu.smartwifi.model.SLog;
@@ -189,9 +187,9 @@ public class SetFragment extends Fragment {
                 list.add(sr2.SSID.toString());
             }
             ArrayList<String> wifilist = new ArrayList(new HashSet(list));
-            ArrayList<WifiList_Item> setlist = new ArrayList<>();
+            ArrayList<WifiListItem> setlist = new ArrayList<>();
             for(int i = 0; i<wifilist.size(); i++) {
-                WifiList_Item item = new WifiList_Item();
+                WifiListItem item = new WifiListItem();
                 String ssid = wifilist.get(i);
                 item.setSSID(ssid);
                 item = ItemSet(apList, item);
@@ -205,11 +203,11 @@ public class SetFragment extends Fragment {
         }
     }
 
-    private ArrayList<WifiList_Item> SortList(ArrayList<WifiList_Item> item){
-        ArrayList<WifiList_Item> tempList = item;
+    private ArrayList<WifiListItem> SortList(ArrayList<WifiListItem> item){
+        ArrayList<WifiListItem> tempList = item;
 
         // 내림 차순 정렬
-        ArrayList<WifiList_Item> sortList = new ArrayList<>();
+        ArrayList<WifiListItem> sortList = new ArrayList<>();
         DescendingObj descending = new DescendingObj();
         Collections.sort(tempList, descending);
         for(int i = 0; i < tempList.size(); i++){
@@ -224,14 +222,14 @@ public class SetFragment extends Fragment {
         return sortList;
     }
 
-    class DescendingObj implements Comparator<WifiList_Item> {
+    class DescendingObj implements Comparator<WifiListItem> {
         @Override
-        public int compare(WifiList_Item o1, WifiList_Item o2) {
+        public int compare(WifiListItem o1, WifiListItem o2) {
             return ((Integer)o2.getLevel()).compareTo((Integer)o1.getLevel());
         }
     }
 
-    private WifiList_Item ItemSet(List apList, WifiList_Item item){
+    private WifiListItem ItemSet(List apList, WifiListItem item){
         String ssid = item.getSSID();
         String bssid = "";
         int level = 0;
@@ -277,9 +275,9 @@ public class SetFragment extends Fragment {
         }
     }
 
-    public SetInterfaces.WifiListClickListener wifiListClickListener = new SetInterfaces.WifiListClickListener() {
+    public SetFragment.WifiListClickListener wifiListClickListener = new SetFragment.WifiListClickListener() {
         @Override
-        public void WifiListClick(WifiList_Item item) {
+        public void WifiListClick(WifiListItem item) {
             tv_add_WifiName.setText(item.getSSID());
             bssid = item.getBSSID();
             if(listDialog.isShowing())
@@ -304,6 +302,15 @@ public class SetFragment extends Fragment {
     public void onDestroy(){
         super.onDestroy();
         SLog.d("destroy");
+    }
+
+    //SetFragment -> SetActivity로 전달하여 Detail 실행
+    public interface OnChangedListener {
+        public void onChangeFragment(WifiData data);
+    }
+
+    public interface WifiListClickListener {
+        public void WifiListClick(WifiListItem item);
     }
 
     @Override
