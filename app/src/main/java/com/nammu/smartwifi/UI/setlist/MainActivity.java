@@ -28,15 +28,17 @@ import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity {
     public static boolean VIEW_EDIT = false;
-    private ArrayList<WifiData> itemList = new ArrayList<>();
     private long backKeyTime = 0;
+    private boolean deleteMode = false;
     @BindView(R.id.Rec_WifiList)
     RecyclerView recyclerView;
 
     @OnClick(R.id.iv_main_toolbar)
     public void toolbarClick(View view) {
         //TODO 리스트 삭제형으로 변경
-
+        SLog.d("Toolbar Click");
+        deleteMode = !deleteMode;
+        ListView();
     }
 
     @OnClick(R.id.fab)
@@ -57,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
         ListView();
-        if (ServiceCheck.isServiceRunningCheck(this)) {
+        if (!ServiceCheck.isServiceRunningCheck(this)) {
             SLog.d("Service Start");
             Intent intent = new Intent(this, SystemService.class);
             startService(intent);
@@ -74,13 +76,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void ListView() {
         testPrint();
+        ArrayList<WifiData> itemList = new ArrayList<>();
         Realm realm = RealmDB.RealmInit(this);
         RealmResults<WifiData> itemResult = realm.where(WifiData.class).findAll();
         for (int i = 0; i < itemResult.size(); i++) {
             WifiData itemData = itemResult.get(i);
             itemList.add(itemData);
         }
-        ItemAdapter adapter = new ItemAdapter(itemList, this);
+        ItemAdapter adapter = new ItemAdapter(itemList, this, deleteMode);
         recyclerView.setAdapter(adapter);
     }
 

@@ -38,7 +38,6 @@ import io.realm.Realm;
 
 
 public class DetailSetFragment extends Fragment {
-
     private final int WIFI_STATE = 0;
     private final int BLUETOOTH_STATE = 1;
     private final int SOUND_STATE = 2;
@@ -123,6 +122,7 @@ public class DetailSetFragment extends Fragment {
             editStatus();
         }else{
             setCurrentStatus();
+            data.setisPlay(true);
         }
         sb_sound.setOnSeekBarChangeListener(audioSeekBarChangeListener);
         sb_bright.setOnSeekBarChangeListener(brightSeekBarChangeListener);

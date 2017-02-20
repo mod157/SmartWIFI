@@ -132,9 +132,16 @@ public class SetFragment extends Fragment {
                 et_add_name.setText(data.getName());
                 sb_add_Priority.setProgress(data.getPripority());
                 tv_add_WifiName.setTextColor(Color.GRAY);
+                SLog.d("isSave : " + data.getisPlay());
             }
         }else{
-            initWifiScan();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    initWifiScan();
+                }
+            }).start();
+
         }
         SLog.d("Scan 이후");
         return view;
@@ -175,7 +182,6 @@ public class SetFragment extends Fragment {
     public void searchWifiList(List<ScanResult> scanList) {
         SLog.d("ScanList");
         int size;
-        List setList = null;
         List apList = scanList;
         if ((size = apList.size()) != 0) {
             SLog.d(size + "");

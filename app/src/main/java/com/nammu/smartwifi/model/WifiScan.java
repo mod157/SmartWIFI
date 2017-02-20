@@ -5,19 +5,26 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.util.Log;
 
+import com.nammu.smartwifi.realmdb.RealmDB;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+
+import io.realm.Realm;
 
 /**
  * Created by SunJae on 2017-02-14.
  */
 
 public class WifiScan {
-    private String TAG = "##### WIFISCAN";
     private WifiManager wm;
     private boolean wifi_state;
     private Context context;
@@ -72,7 +79,7 @@ public class WifiScan {
                 wm.startScan();
             }
         }
-        Log.e(TAG, "startScan");
+        SLog.d("startScan");
         IntentFilter filter = new IntentFilter();
         filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         context.registerReceiver(wifiR, filter);
@@ -83,7 +90,7 @@ public class WifiScan {
         @Override
         public void onReceive(Context context, Intent intent) {
             if(intent.getAction().equals(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)){
-                Log.e(TAG, "BroadCast");
+                SLog.d("BroadCast");
                 if(!wifi_state)
                     wm.setWifiEnabled(false);
                 scanResultInterface.setScanResult(wm.getScanResults());
@@ -91,4 +98,38 @@ public class WifiScan {
             }
         }
     };
+
+    //TODO 대기시간 Callback
+    public void wifiConnetion(String ssid){
+        SLog.d("WifiConnection");
+        wm.setWifiEnabled(true);
+        List<WifiConfiguration> list = wm.getConfiguredNetworks();
+        try {
+            if (list.isEmpty()) {
+                Log.v("Error", "list가 빔");
+            }
+
+            for (WifiConfiguration i : list) {
+                if (i.SSID != null && i.SSID.equals("\"" + ssid + "\"")) {
+                    wm.disconnect();
+                    wm.enableNetwork(i.networkId, true);
+                    wm.reconnect();
+                    break;
+                }
+            }
+        }catch(Exception e){
+            wifiConnetion(ssid);
+        }
+    }
+
+    public void sortLevelResult(List<ScanResult> results){
+        //Level순으로 정렬 원하는 위치면 다른 Wifi보다 세기가 강할 확률이 높음
+        Comparator<ScanResult> comparator = new Comparator<ScanResult>() {
+            @Override
+            public int compare(ScanResult lhs, ScanResult rhs) {
+                return (lhs.level <rhs.level ? 1 : (lhs.level==rhs.level ? 0 : -1));
+            }
+        };
+        Collections.sort(results, comparator);
+    }
 }

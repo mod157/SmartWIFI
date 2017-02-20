@@ -3,6 +3,10 @@ package com.nammu.smartwifi.realmdb.realmobject;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
@@ -44,7 +48,12 @@ public class WifiData extends RealmObject implements Parcelable {
         SSID = pl.readString();
         BSSID = pl.readString();
         Pripority = pl.readInt();
+        boolean[] getPlay = new boolean[1];
+        pl.readBooleanArray(getPlay);
+        isPlay = getPlay[0];
     }
+
+
 
     @Override
     public int describeContents() {
@@ -57,6 +66,8 @@ public class WifiData extends RealmObject implements Parcelable {
         parcel.writeString(SSID);
         parcel.writeString(BSSID);
         parcel.writeInt(Pripority);
+        boolean[] getPlay = {isPlay};
+        parcel.writeBooleanArray(getPlay);
     }
 
     public static final Parcelable.Creator<WifiData> CREATOR = new Creator<WifiData>() {
