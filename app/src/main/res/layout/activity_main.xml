@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.nammu.smartwifi.UI.setlist.MainActivity">
+    tools:context="com.nammu.smartwifi.util.setlist.MainActivity">
 
     <LinearLayout
         android:orientation="vertical"

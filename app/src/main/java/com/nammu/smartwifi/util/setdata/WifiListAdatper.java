@@ -1,4 +1,4 @@
-package com.nammu.smartwifi.UI.setdata;
+package com.nammu.smartwifi.util.setdata;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.nammu.smartwifi.R;
 import com.nammu.smartwifi.model.WifiListItem;
-import com.nammu.smartwifi.UI.setdata.fragment.SetFragment;
+import com.nammu.smartwifi.util.setdata.fragment.SetFragment;
 import com.nammu.smartwifi.model.SLog;
 
 import java.util.ArrayList;

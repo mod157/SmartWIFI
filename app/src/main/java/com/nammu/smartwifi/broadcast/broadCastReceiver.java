@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import com.nammu.smartwifi.model.SLog;
 import com.nammu.smartwifi.service.SystemService;
 
 /**
@@ -11,14 +12,25 @@ import com.nammu.smartwifi.service.SystemService;
  */
 
 public class broadCastReceiver extends BroadcastReceiver {
+
+   /* broadCastReceiver(){
+        SLog.d("broadcast create");
+    }*/
+
     @Override
     public void onReceive(Context context, Intent intent) {
+        SLog.d("Receive");
         String action = intent.getAction();
         //종료 후 자동실행
         if (action.equals("android.intent.action.BOOT_COMPLETED")) {
             //실행할 액티비티
             Intent service = new Intent(context, SystemService.class);
             context.startService(service);
+        }
+
+        if(action.equals("setChangeWifiConnection")){
+            SLog.d("broadCast Success");
+          //  SystemService.changeWifiConnection change = intent.getExtras();
         }
 
     }

@@ -1,4 +1,4 @@
-package com.nammu.smartwifi.UI.setdata;
+package com.nammu.smartwifi.util.setdata;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,9 +8,9 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.nammu.smartwifi.R;
-import com.nammu.smartwifi.UI.setdata.fragment.DetailSetFragment;
-import com.nammu.smartwifi.UI.setdata.fragment.SetFragment;
-import com.nammu.smartwifi.UI.setlist.MainActivity;
+import com.nammu.smartwifi.util.setdata.fragment.DetailSetFragment;
+import com.nammu.smartwifi.util.setdata.fragment.SetFragment;
+import com.nammu.smartwifi.util.setlist.MainActivity;
 import com.nammu.smartwifi.model.SLog;
 import com.nammu.smartwifi.realmdb.realmobject.WifiData;
 

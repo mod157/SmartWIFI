@@ -1,4 +1,4 @@
-package com.nammu.smartwifi.UI.permission;
+package com.nammu.smartwifi.util.permission;
 
 import android.Manifest;
 import android.content.Intent;
@@ -12,7 +12,7 @@ import android.util.Log;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 import com.nammu.smartwifi.R;
-import com.nammu.smartwifi.UI.setlist.MainActivity;
+import com.nammu.smartwifi.util.setlist.MainActivity;
 
 import java.util.ArrayList;
 

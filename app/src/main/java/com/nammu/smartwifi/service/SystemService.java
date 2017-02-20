@@ -5,22 +5,18 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.net.wifi.ScanResult;
-import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v7.app.NotificationCompat;
-import android.util.Log;
 
 import com.nammu.smartwifi.R;
-import com.nammu.smartwifi.UI.setlist.MainActivity;
 import com.nammu.smartwifi.WifiAudioManager;
 import com.nammu.smartwifi.model.OnInterface;
 import com.nammu.smartwifi.model.SLog;
@@ -111,11 +107,6 @@ public class SystemService extends Service {
                 for (int i = 0; i < results.size(); i++) {
                     WifiData item = results.get(i);
                     boolean ssidCheck = wm.getConnectionInfo().getSSID().equals("\"" + item.getSSID() + "\"");
-                    /*if (ssidCheck && flag) {
-                        SLog.d("이미 연결됨 " + wm.getConnectionInfo().getSSID() + " : " + item.getSSID());
-                        delay();
-                        return;
-                    }*/
 
                     if(lastSSID.equals(item.getSSID())){
                         SLog.d("이미 연결됨 " + wm.getConnectionInfo().getSSID() + " : " + item.getSSID());
@@ -123,12 +114,12 @@ public class SystemService extends Service {
                         return;
                     }
 
-                    if (!ssidCheck && flag) {
+                   /* if (!ssidCheck && flag) {
                         //TODO 사용자가 직접 변경?
                         SLog.d("직접 변경");
                         //otification_button(item.getSSID(), results);
                         return;
-                    }
+                    }*/
 
                     //초기화 작업
                     if (!flag)
@@ -226,8 +217,7 @@ public class SystemService extends Service {
 
     private void SoundSet(int size){
         SLog.d("Sound");
-        AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, size, AudioManager.FLAG_PLAY_SOUND);
+        wifiAudioManager.setSystemVolume(size);
     }
 
     private void BrightSet(int size){
@@ -278,11 +268,9 @@ public class SystemService extends Service {
             SLog.d("Noti value :  " + wifilist.get(i));
         }
 
-        /*//TODO intent로 broadcast로 던져준다.
-        Intent intent = new Intent(this, wifiConnectionChangeReceiver);
-        intent.setAction("edit");
-        PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);*/
-
+        //TODO intent로 broadcast로 던져준다.
+        Intent intent = new Intent("setChangeWifiConnection");
+        PendingIntent pIntent = PendingIntent.getBroadcast(this,0,intent,0);
         NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         // 알림 객체 생성
         Notification noti = new NotificationCompat.Builder(this)
@@ -291,7 +279,7 @@ public class SystemService extends Service {
                 .setContentTitle("WIFI Change - '" + ssid + "'")
                 .setContentText("다른 '" + (wifilist.size()-1) +"' 개 존재합니다.")
                 .setWhen(System.currentTimeMillis())
-              //  .addAction(R.drawable.clickborder,"변경",pIntent)
+                .addAction(R.drawable.clickborder,"변경",pIntent)
                 .build();
 
         // 알림 방식 지정
@@ -321,13 +309,80 @@ public class SystemService extends Service {
         nm.notify(100, noti);
 
     }
+    /* public static void remindUserBecauseCharging(Context context) {
 
-    BroadcastReceiver wifiConnectionChangeReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
+                .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                .setSmallIcon(R.drawable.ic_drink_notification)
+                .setLargeIcon(largeIcon(context))
+                .setContentTitle(context.getString(R.string.charging_reminder_notification_title))
+                .setContentText(context.getString(R.string.charging_reminder_notification_body))
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(
+                        context.getString(R.string.charging_reminder_notification_body)))
+                .setDefaults(Notification.DEFAULT_VIBRATE)
+                .setContentIntent(contentIntent(context))
+                // COMPLETED (17) Add the two new actions using the addAction method and your helper methods
+                .addAction(drinkWaterAction(context))
+                .addAction(ignoreReminderAction(context))
+                .setAutoCancel(true);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            notificationBuilder.setPriority(Notification.PRIORITY_HIGH);
         }
-    };
+
+
+        NotificationManager notificationManager = (NotificationManager)
+                context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+    notificationManager.notify(WATER_REMINDER_NOTIFICATION_ID, notificationBuilder.build());
+}
+
+    private static android.support.v4.app.NotificationCompat.Action ignoreReminderAction(Context context) {
+        Intent ignoreReminderIntent = new Intent(context, WaterReminderIntentService.class);
+        ignoreReminderIntent.setAction(ReminderTasks.ACTION_DISMISS_NOTIFICATION);
+        PendingIntent ignoreReminderPendingIntent = PendingIntent.getService(
+                context,
+                ACTION_IGNORE_PENDING_INTENT_ID,
+                ignoreReminderIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        android.support.v4.app.NotificationCompat.Action ignoreReminderAction = new android.support.v4.app.NotificationCompat.Action(R.drawable.ic_cancel_black_24px,
+                "No, thanks.",
+                ignoreReminderPendingIntent);
+        return ignoreReminderAction;
+    }
+
+    private static android.support.v4.app.NotificationCompat.Action drinkWaterAction(Context context) {
+        Intent incrementWaterCountIntent = new Intent(context, WaterReminderIntentService.class);
+        incrementWaterCountIntent.setAction(ReminderTasks.ACTION_INCREMENT_WATER_COUNT);
+        PendingIntent incrementWaterPendingIntent = PendingIntent.getService(
+                context,
+                ACTION_DRINK_PENDING_INTENT_ID,
+                incrementWaterCountIntent,
+                PendingIntent.FLAG_CANCEL_CURRENT);
+        android.support.v4.app.NotificationCompat.Action drinkWaterAction = new android.support.v4.app.NotificationCompat.Action(R.drawable.ic_local_drink_black_24px,
+                "I did it!",
+                incrementWaterPendingIntent);
+        return drinkWaterAction;
+    }
+
+    private static PendingIntent contentIntent(Context context) {
+        Intent startActivityIntent = new Intent(context, MainActivity.class);
+        return PendingIntent.getActivity(
+                context,
+                WATER_REMINDER_PENDING_INTENT_ID,
+                startActivityIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    private static Bitmap largeIcon(Context context) {
+        Resources res = context.getResources();
+        Bitmap largeIcon = BitmapFactory.decodeResource(res, R.drawable.ic_local_drink_black_24px);
+        return largeIcon;
+    }*/
+
+    public interface changeWifiConnection{
+        public void setChangeWifiConnection(int num);
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {

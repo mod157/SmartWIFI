@@ -8,7 +8,7 @@ import android.media.AudioManager;
  */
 
 public class WifiAudioManager {
-    public static WifiAudioManager wifiAudioManager;
+    private static WifiAudioManager wifiAudioManager;
     private AudioManager audioManager;
 
     private WifiAudioManager(Context context){

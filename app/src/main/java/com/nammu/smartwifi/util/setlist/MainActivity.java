@@ -1,4 +1,4 @@
-package com.nammu.smartwifi.UI.setlist;
+package com.nammu.smartwifi.util.setlist;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.nammu.smartwifi.R;
-import com.nammu.smartwifi.UI.setdata.SetActivity;
+import com.nammu.smartwifi.util.setdata.SetActivity;
 import com.nammu.smartwifi.model.SLog;
 import com.nammu.smartwifi.model.ServiceCheck;
 import com.nammu.smartwifi.realmdb.RealmDB;

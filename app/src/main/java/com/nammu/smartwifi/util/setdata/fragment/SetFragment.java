@@ -1,4 +1,4 @@
-package com.nammu.smartwifi.UI.setdata.fragment;
+package com.nammu.smartwifi.util.setdata.fragment;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -20,9 +20,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nammu.smartwifi.R;
-import com.nammu.smartwifi.UI.setdata.dialog.WifiListDialog;
+import com.nammu.smartwifi.util.setdata.dialog.WifiListDialog;
 import com.nammu.smartwifi.model.WifiListItem;
-import com.nammu.smartwifi.UI.setlist.MainActivity;
+import com.nammu.smartwifi.util.setlist.MainActivity;
 import com.nammu.smartwifi.model.OnInterface;
 import com.nammu.smartwifi.model.SLog;
 import com.nammu.smartwifi.model.WifiScan;
@@ -276,7 +276,7 @@ public class SetFragment extends Fragment {
             return false;
         }catch(NullPointerException e){
             SLog.d(""+e.toString());
-            checkingSaveWifi(configNetworkList, scanSSID);
+            checkingSaveWifi(this.configNetworkList, scanSSID);
             return false;
         }
     }

@@ -1,4 +1,4 @@
-package com.nammu.smartwifi.UI.setdata.fragment;
+package com.nammu.smartwifi.util.setdata.fragment;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
@@ -19,7 +19,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.nammu.smartwifi.R;
-import com.nammu.smartwifi.UI.setlist.MainActivity;
+import com.nammu.smartwifi.util.setlist.MainActivity;
 import com.nammu.smartwifi.WifiAudioManager;
 import com.nammu.smartwifi.model.SLog;
 import com.nammu.smartwifi.realmdb.RealmDB;

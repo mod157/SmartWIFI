@@ -1,4 +1,4 @@
-package com.nammu.smartwifi.UI.setlist;
+package com.nammu.smartwifi.util.setlist;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,8 +13,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.nammu.smartwifi.R;
-import com.nammu.smartwifi.UI.setdata.SetActivity;
-import com.nammu.smartwifi.UI.setlist.dialog.RecyclerMenuDialog;
+import com.nammu.smartwifi.util.setdata.SetActivity;
+import com.nammu.smartwifi.util.setlist.dialog.RecyclerMenuDialog;
 import com.nammu.smartwifi.model.SLog;
 import com.nammu.smartwifi.realmdb.RealmDB;
 import com.nammu.smartwifi.realmdb.realmobject.WifiData;

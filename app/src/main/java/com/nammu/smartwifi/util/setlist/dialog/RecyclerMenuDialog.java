@@ -1,4 +1,4 @@
-package com.nammu.smartwifi.UI.setlist.dialog;
+package com.nammu.smartwifi.util.setlist.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
