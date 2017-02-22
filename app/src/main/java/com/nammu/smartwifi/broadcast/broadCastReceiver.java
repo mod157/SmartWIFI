@@ -26,26 +26,6 @@ public class broadCastReceiver extends BroadcastReceiver {
             Intent service = new Intent(context, SystemService.class);
             context.startService(service);
         }
-
-        if(action.equals("setChangeWifiConnection")){
-            SLog.d("broadCast Success");
-            initialSet(context);
-            eventListener.onChangeConnection();
-        }
-
-        if(action.equals("stopService")){
-            SLog.d("stopService");
-            initialSet(context);
-            eventListener.onServiceStop();
-            wifiNotificationManager.notification("중지","");
-        }
-
-        if(action.equals("startService")) {
-            SLog.d("startService");
-            initialSet(context);
-            eventListener.onServiceStart();
-            wifiNotificationManager.notification("실행","");
-        }
     }
 
     private void initialSet(Context context){

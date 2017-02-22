@@ -38,4 +38,8 @@ public class WifiBrightManager {
         }
         return -1;
     }
+
+    public void setSettingBright(int size){
+        Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, size);
+    }
 }

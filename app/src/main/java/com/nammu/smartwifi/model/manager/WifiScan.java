@@ -99,7 +99,9 @@ public class WifiScan {
             }
         }
     };
-
+    public void wifiState(boolean state){
+        wm.setWifiEnabled(state);
+    }
     //TODO 대기시간 Callback
     public void wifiConnetion(String ssid){
         SLog.d("WifiConnection");

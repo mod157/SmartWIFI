@@ -36,6 +36,7 @@
             <category android:name="android.intent.category.DEFAULT"/>
         </intent-filter>
         </service>
+        <service android:name=".service.SystemBindService"/>
         <receiver android:name=".broadcast.broadCastReceiver"
             android:enabled="true"
             android:exported="false"

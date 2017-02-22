@@ -2,11 +2,13 @@ package com.nammu.smartwifi.service;
 
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
+import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
@@ -16,6 +18,7 @@ import com.nammu.smartwifi.model.OnInterface;
 import com.nammu.smartwifi.model.SLog;
 import com.nammu.smartwifi.model.ServiceEvent;
 import com.nammu.smartwifi.model.manager.WifiAudioManager;
+import com.nammu.smartwifi.model.manager.WifiBluetoothManager;
 import com.nammu.smartwifi.model.manager.WifiBrightManager;
 import com.nammu.smartwifi.model.manager.WifiNotificationManager;
 import com.nammu.smartwifi.model.manager.WifiScan;
@@ -44,6 +47,7 @@ public class SystemService extends Service implements ServiceEvent.changeNotific
     private WifiAudioManager wifiAudioManager;
     private WifiNotificationManager wifiNotificationManager;
     private WifiBrightManager brightManager;
+    private WifiBluetoothManager bluetoothManager;
     private WifiManager wm;
     private WifiScan wifiScan;
     private Handler scanHandler;
@@ -63,6 +67,7 @@ public class SystemService extends Service implements ServiceEvent.changeNotific
         realm = RealmDB.RealmInit(this);
         wifiAudioManager = WifiAudioManager.getInstance();
         wifiNotificationManager = new WifiNotificationManager(this);
+        bluetoothManager = new WifiBluetoothManager();
         wm = (WifiManager) getSystemService(WIFI_SERVICE);
         brightManager = new WifiBrightManager(this);
         ServiceEvent.getInstance(this);
@@ -192,24 +197,22 @@ public class SystemService extends Service implements ServiceEvent.changeNotific
         SLog.d("SetSetting : " + data_state.getWifiState() + " : " +  data_state.getBluetoothState() +" : "+ data_state.getSoundState() + " : " + data_state.getBrightState());
         if(data_state.getWifiState()){
             wifiScan.wifiConnetion(ssid);
+        }else{
+            wifiScan.wifiState(false);
         }
         if(data_state.getBluetoothState()){
-            BluetoothConnection();
+            bluetoothManager.bluetoothEnable(true);
+        }else{
+            bluetoothManager.bluetoothEnable(false);
         }
         if(data_state.getSoundState()) {
-            SLog.d("Sound");
             wifiAudioManager.setSystemVolume(data_state.getSoundSize());
         }
         if(data_state.getBrightState()){
-            Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, data_state.getBrightSize());
+           brightManager.setSettingBright(data_state.getBrightSize());
         }
     }
 
-    private void BluetoothConnection(){
-        SLog.d("Blue");
-        BluetoothAdapter blueAdapter = BluetoothAdapter.getDefaultAdapter();
-        blueAdapter.enable();
-    }
 
     private void scanListEqualBSSID(List<ScanResult> scanList, ArrayList<WifiData> results){
         int size = scanList.size();
@@ -251,6 +254,7 @@ public class SystemService extends Service implements ServiceEvent.changeNotific
     @Override
     public void onServiceStop() {
         scanHandler.removeCallbacksAndMessages(null);
+        wifiNotificationManager.notification("중지","");
         SLog.d("Thread Stop");
     }
 
@@ -260,7 +264,7 @@ public class SystemService extends Service implements ServiceEvent.changeNotific
         saveTime = INIT_SAVETIME;
         resultsItemNumber = 0;
         scanHandler.postDelayed(serviceThread,0);
-        
+        wifiNotificationManager.notification("실행","");
         SLog.d("Thread start");
     }
 
@@ -278,9 +282,17 @@ public class SystemService extends Service implements ServiceEvent.changeNotific
             serviceThread.stop();
     }
 
+    IBinder mBinder = new ServiceBinder();
+
+    class ServiceBinder extends Binder {
+        SystemService getService() { // 서비스 객체를 리턴
+            return SystemService.this;
+        }
+    }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return mBinder;
     }
 }

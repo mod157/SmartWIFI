@@ -10,6 +10,7 @@ import android.support.v4.app.NotificationCompat;
 import com.nammu.smartwifi.R;
 import com.nammu.smartwifi.model.SLog;
 import com.nammu.smartwifi.realmdb.realmobject.WifiData;
+import com.nammu.smartwifi.service.SystemBindService;
 
 import java.util.ArrayList;
 
@@ -52,17 +53,23 @@ public class WifiNotificationManager {
     }
 
     private NotificationCompat.Action stopAction(){
-        Intent intent = new Intent("stopService");
-        PendingIntent pIntent = PendingIntent.getBroadcast(context,0,intent,0);
-        NotificationCompat.Action changeAction = new NotificationCompat.Action(R.drawable.pause,
+        //Intent intent = new Intent("stopService");
+        //PendingIntent pIntent = PendingIntent.getBroadcast(context,0,intent,0);
+        Intent intent = new Intent(context, SystemBindService.class);
+        intent.setAction("stopService");
+        PendingIntent pIntent = PendingIntent.getService(context,0,intent,0);
+        NotificationCompat.Action stopAction = new NotificationCompat.Action(R.drawable.pause,
                 context.getString(R.string.noti_stop),
                 pIntent);
-        return changeAction;
+        return stopAction;
     }
     private NotificationCompat.Action startAction(){
         //TODO intent로 broadcast로 던져준다.
-        Intent intent = new Intent("startService");
-        PendingIntent pIntent = PendingIntent.getBroadcast(context,0,intent,0);
+        /* intent = new Intent("startService");
+        PendingIntent pIntent = PendingIntent.getBroadcast(context,0,intent,0);*/
+        Intent intent = new Intent(context, SystemBindService.class);
+        intent.setAction("startService");
+        PendingIntent pIntent = PendingIntent.getService(context,0,intent,0);
         NotificationCompat.Action startAction = new NotificationCompat.Action(R.drawable.play,
                 context.getString(R.string.noti_start),
                 pIntent);
@@ -71,8 +78,11 @@ public class WifiNotificationManager {
 
     private NotificationCompat.Action changeAction(){
         //TODO intent로 broadcast로 던져준다.
-        Intent intent = new Intent("setChangeWifiConnection");
-        PendingIntent pIntent = PendingIntent.getBroadcast(context,0,intent,0);
+        /*Intent intent = new Intent("setChangeWifiConnection");
+        PendingIntent pIntent = PendingIntent.getBroadcast(context,0,intent,0);*/
+        Intent intent = new Intent(context, SystemBindService.class);
+        intent.setAction("changeConnection");
+        PendingIntent pIntent = PendingIntent.getService(context,0,intent,0);
         NotificationCompat.Action changeAction = new NotificationCompat.Action(R.drawable.trans_arrows,
                 context.getString(R.string.noti_wifiChange),
                 pIntent);
