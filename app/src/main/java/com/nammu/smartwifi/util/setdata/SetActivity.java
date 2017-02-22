@@ -51,13 +51,17 @@ public class SetActivity extends AppCompatActivity implements SetFragment.OnChan
         SLog.d("toolbar click");
         iv_toolbar.setVisibility(View.VISIBLE);
         Fragment fragment = getSupportFragmentManager().findFragmentByTag("detail");
-        if (DetailSetFragment.ResetFragmentListener.class.isAssignableFrom(fragment.getClass())) {
-            DetailSetFragment.ResetFragmentListener resetFragmentListener = (DetailSetFragment.ResetFragmentListener) fragment;
+        if (SetActivity.ResetFragmentListener.class.isAssignableFrom(fragment.getClass())) {
+            SLog.d("Fragment Refresh");
+           SetActivity.ResetFragmentListener resetFragmentListener = (SetActivity.ResetFragmentListener) fragment;
             resetFragmentListener.updateView();
         }
+        SLog.d("Not Fragment");
     }
 
-
+    public interface ResetFragmentListener{
+        public void updateView();
+    }
     //Set -> Detail로 전환
     @Override
     public void onChangeFragment(WifiData data) {

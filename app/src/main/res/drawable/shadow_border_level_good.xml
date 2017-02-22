@@ -5,7 +5,7 @@
             <item android:bottom="3dp">
                 <shape>
                     <corners android:radius="3dp" />
-                    <solid android:color="@color/material_lime" />
+                    <solid android:color="@color/LevelGood" />
                 </shape>
             </item>
         </layer-list>

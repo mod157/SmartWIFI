@@ -1,16 +1,13 @@
 package com.nammu.smartwifi.util.setdata.fragment;
 
-import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
@@ -19,12 +16,15 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.nammu.smartwifi.R;
-import com.nammu.smartwifi.util.setlist.MainActivity;
-import com.nammu.smartwifi.WifiAudioManager;
 import com.nammu.smartwifi.model.SLog;
+import com.nammu.smartwifi.model.manager.WifiAudioManager;
+import com.nammu.smartwifi.model.manager.WifiBluetoothManager;
+import com.nammu.smartwifi.model.manager.WifiBrightManager;
 import com.nammu.smartwifi.realmdb.RealmDB;
 import com.nammu.smartwifi.realmdb.realmobject.WifiData;
 import com.nammu.smartwifi.realmdb.realmobject.WifiDataState;
+import com.nammu.smartwifi.util.setdata.SetActivity;
+import com.nammu.smartwifi.util.setlist.MainActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,17 +37,18 @@ import io.realm.Realm;
  */
 
 
-public class DetailSetFragment extends Fragment {
+public class DetailSetFragment extends Fragment implements SetActivity.ResetFragmentListener {
     private final int WIFI_STATE = 0;
     private final int BLUETOOTH_STATE = 1;
     private final int SOUND_STATE = 2;
     private final int BRIGHT_STATE = 3;
-
+    private final int BRIGHT_DIV = 100;
     private boolean vibrate = false;
     private boolean[] settingstate = new boolean[4];
     private WifiData data;
     private WifiAudioManager wifiAudioManager;
-
+    private WifiBrightManager wifiBrightManager;
+    private WifiBluetoothManager wifiBluetoothManager;
     private int init_system_Sound;
 
     @BindView(R.id.linear_sound)
@@ -109,6 +110,8 @@ public class DetailSetFragment extends Fragment {
             data = bundle.getParcelable("WifiData_Bundle");
         }
         wifiAudioManager = WifiAudioManager.getInstance();
+        wifiBrightManager = new WifiBrightManager(getContext());
+        wifiBluetoothManager = new WifiBluetoothManager();
     }
 
     @Override
@@ -135,32 +138,7 @@ public class DetailSetFragment extends Fragment {
         Realm realm = RealmDB.RealmInit(getContext());
         WifiDataState state = realm.where(WifiDataState.class).equalTo("BSSID", data.getBSSID()).findFirst();
         try {
-            sw_wifi.setChecked(state.getWifiState());
-            sw_bluetooth.setChecked(state.getBluetoothState());
-            boolean soundCheck = state.getSoundState();
-            boolean brightCheck = state.getBrightState();
-
-            if (soundCheck) {
-                int soundSize = state.getSoundSize();
-                sw_sound.setChecked(soundCheck);
-                if (soundSize == 0) {
-                    sb_sound.setProgress(0);
-                    tv_sound_state_value.setText(getString(R.string.detail_Sound_Mute));
-                } else if (soundSize > 0) {
-                    sb_sound.setProgress(soundSize);
-                    tv_sound_state_value.setText(soundSize + "");
-                } else {
-                    sb_sound.setProgress(0);
-                    tv_sound_state_value.setText(getString(R.string.detail_Sound_Vibrate));
-                }
-            }
-
-            if (brightCheck) {
-                sw_bright.setChecked(brightCheck);
-                sb_bright.setProgress(state.getBrightSize());
-                tv_bright_state_value.setText(((float) (state.getBrightSize()) / 250) * 100 + "%");
-            }
-
+           initialSetView(state);
         }catch(Exception e){
             SLog.d("realm error");
             e.printStackTrace();
@@ -169,48 +147,42 @@ public class DetailSetFragment extends Fragment {
 
     //현재 상태
     private void  setCurrentStatus() {
-        BluetoothAdapter blueAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (blueAdapter == null) {
-            sw_bluetooth.setChecked(false);
-        } else {
-            sw_bluetooth.setChecked(blueAdapter.isEnabled());
-        }
+        WifiDataState state = new WifiDataState();
+        state.setWifiState(true);
+        state.setBluetoothState(wifiBluetoothManager.isEnableBluetooth());
+        state.setSoundState(true);
+        state.setBrightState(true);
+        state.setSoundSize(wifiAudioManager.getRingerModeInt());
+        state.setBrightSize(wifiBrightManager.getBrightSize());
+        initialSetView(state);
+    }
 
-        sw_sound.setChecked(true);
-        linear_sound.setVisibility(View.VISIBLE);
-        sw_bright.setChecked(true);
-        linear_bright.setVisibility(View.VISIBLE);
+    private void initialSetView(WifiDataState state){
+        sw_wifi.setChecked(state.getWifiState());
+        sw_bluetooth.setChecked(state.getBluetoothState());
+        boolean soundCheck = state.getSoundState();
+        boolean brightCheck = state.getBrightState();
 
-        switch(wifiAudioManager.getRingerMode()) {
-            //무음
-            case AudioManager.RINGER_MODE_SILENT:
-                //# string으로 변경
-                tv_sound_state_value.setText("무음");
+        if (soundCheck) {
+            int soundSize = state.getSoundSize();
+            sw_sound.setChecked(soundCheck);
+            if (soundSize == 0) {
                 sb_sound.setProgress(0);
-                cb_sound_vibrate.setChecked(false);
-                break;
-            //진동
-            case AudioManager.RINGER_MODE_VIBRATE:
-                tv_sound_state_value.setText("진동");
+                tv_sound_state_value.setText(getString(R.string.detail_Sound_Mute));
+            } else if (soundSize > 0) {
+                sb_sound.setProgress(soundSize);
+                tv_sound_state_value.setText(soundSize + "");
+            } else {
                 sb_sound.setProgress(0);
                 cb_sound_vibrate.setChecked(true);
-                break;
-            case  AudioManager.RINGER_MODE_NORMAL:
-                tv_sound_state_value.setText(init_system_Sound+"");
-                sb_sound.setProgress(init_system_Sound);
-                cb_sound_vibrate.setChecked(false);
-                break;
-        }
-        try {
-            if(Settings.System.getInt(getContext().getContentResolver(),Settings.System.SCREEN_BRIGHTNESS_MODE)!=0 ) {
-                Settings.System.putInt(getContext().getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, 0);
+                tv_sound_state_value.setText(getString(R.string.detail_Sound_Vibrate));
             }
-            int bright = Settings.System.getInt(getContext().getContentResolver(),Settings.System.SCREEN_BRIGHTNESS);
-            sb_bright.setProgress (bright);
-            tv_bright_state_value.setText((float)bright/250 * 100 + "%");
-            SLog.d(bright/250 * 100 + "%");
-        } catch (Settings.SettingNotFoundException e) {
-            e.printStackTrace();
+        }
+
+        if (brightCheck) {
+            sw_bright.setChecked(brightCheck);
+            sb_bright.setProgress(state.getBrightSize());
+            tv_bright_state_value.setText(((float) (state.getBrightSize()) / 250) * 100 + "%");
         }
     }
 
@@ -229,32 +201,25 @@ public class DetailSetFragment extends Fragment {
     private void setChangeAudio(int progress){
         if(cb_sound_vibrate.isChecked()){
             cb_sound_vibrate.setChecked(false);
-          //  audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
             wifiAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
         }
         //TODO 변경 될 때마다 소리 알람
         wifiAudioManager.setSystemVolume(progress);
-       // audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, progress, AudioManager.FLAG_PLAY_SOUND);
         tv_sound_state_value.setText(progress+"");
     }
 
     private void setChangeBright(SeekBar seekBar, int progress){
         Window window = getActivity().getWindow();
-        if (progress < 10) {
-            progress = 10;
+        if (progress < WifiBrightManager.BRIGHT_MIN) {
+            progress = WifiBrightManager.BRIGHT_MIN;
             seekBar.setProgress(progress);
-        } else if (progress > 250) {
-            progress = 250;
+        } else if (progress > WifiBrightManager.BRIGHT_MAX) {
+            progress = WifiBrightManager.BRIGHT_MAX;
         }
-        float bright_value = (float)progress / 250;
+        float bright_value = (float)progress / WifiBrightManager.BRIGHT_MAX;
+        tv_bright_state_value.setText((int)(bright_value * BRIGHT_DIV) + "%");
 
-        //TODO 첫째자리만
-        tv_bright_state_value.setText(bright_value * 100 + "%");
-
-        WindowManager.LayoutParams parms =  window.getAttributes();
-        parms.screenBrightness = bright_value;
-        parms.flags |= WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
-        window.setAttributes(parms);
+        wifiBrightManager.setWindowBright(window, bright_value);
     }
 
     SeekBar.OnSeekBarChangeListener brightSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
@@ -285,14 +250,10 @@ public class DetailSetFragment extends Fragment {
         }
         settingstate[WIFI_STATE] = sw_wifi.isChecked();
 
-        WifiDataState dataState = new WifiDataState();
-        dataState.setBSSID(data.getBSSID());
-        dataState.setWifiState(settingstate[WIFI_STATE]);
-        dataState.setBluetoothState(settingstate[BLUETOOTH_STATE]);
-        dataState.setSoundState(settingstate[SOUND_STATE]);
-        dataState.setSoundSize(sound_size);
-        dataState.setBrightState(settingstate[BRIGHT_STATE]);
-        dataState.setBrightSize(bright_size);
+        WifiDataState dataState = new WifiDataState(data.getBSSID(),settingstate[WIFI_STATE],
+                settingstate[BLUETOOTH_STATE],settingstate[SOUND_STATE],
+                settingstate[BRIGHT_STATE],sound_size,bright_size);
+
         return dataState;
     }
 
@@ -303,6 +264,7 @@ public class DetailSetFragment extends Fragment {
                 SLog.d("진동 Check");
                 wifiAudioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
                 sb_sound.setProgress(0);
+                cb_sound_vibrate.setChecked(true);
                 tv_sound_state_value.setText("진동");
             }
         }
@@ -333,20 +295,15 @@ public class DetailSetFragment extends Fragment {
         }
     }
 
-    public interface ResetFragmentListener{
-        public void updateView();
+    @Override
+    public void updateView() {
+        if (MainActivity.VIEW_EDIT) {
+            editStatus();
+        }else{
+            setCurrentStatus();
+        }
     }
 
-    ResetFragmentListener resetFragmentListener = new ResetFragmentListener() {
-        @Override
-        public void updateView() {
-            if (MainActivity.VIEW_EDIT) {
-                editStatus();
-            }else{
-                setCurrentStatus();
-            }
-        }
-    };
 
 
     @Override

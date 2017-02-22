@@ -10,13 +10,12 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.nammu.smartwifi.R;
-import com.nammu.smartwifi.util.setdata.SetActivity;
 import com.nammu.smartwifi.model.SLog;
 import com.nammu.smartwifi.model.ServiceCheck;
 import com.nammu.smartwifi.realmdb.RealmDB;
 import com.nammu.smartwifi.realmdb.realmobject.WifiData;
 import com.nammu.smartwifi.realmdb.realmobject.WifiDataState;
-import com.nammu.smartwifi.service.SystemService;
+import com.nammu.smartwifi.util.setdata.SetActivity;
 
 import java.util.ArrayList;
 
@@ -61,8 +60,11 @@ public class MainActivity extends AppCompatActivity {
         ListView();
         if (!ServiceCheck.isServiceRunningCheck(this)) {
             SLog.d("Service Start");
-            Intent intent = new Intent(this, SystemService.class);
+            Intent intent = new Intent("SmartWIFI.SystemService");
+            intent.setPackage("com.nammu.smartwifi");
             startService(intent);
+        }else{
+            SLog.d("Service는 이미 실행 중 입니다.");
         }
     }
 

@@ -1,4 +1,4 @@
-package com.nammu.smartwifi.model;
+package com.nammu.smartwifi.model.manager;
 
 import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
@@ -11,14 +11,15 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.util.Log;
 
-import com.nammu.smartwifi.realmdb.RealmDB;
+import com.nammu.smartwifi.model.OnInterface;
+import com.nammu.smartwifi.model.SLog;
+import com.nammu.smartwifi.realmdb.realmobject.WifiData;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
-
-import io.realm.Realm;
 
 /**
  * Created by SunJae on 2017-02-14.
@@ -131,5 +132,17 @@ public class WifiScan {
             }
         };
         Collections.sort(results, comparator);
+    }
+
+    public static ArrayList<String> sortList(ArrayList<WifiData> itemList){
+        ArrayList<String> ssidList = new ArrayList<>();
+        for(int j = 0; j<itemList.size(); j++){ //SSID 중복 제거 (맥주소 통일화)
+            WifiData item = itemList.get(j);
+            if(item.getSSID().equals(""))
+                continue;
+            ssidList.add(item.getSSID());
+        }
+        ssidList = new ArrayList(new HashSet(ssidList));
+        return ssidList;
     }
 }

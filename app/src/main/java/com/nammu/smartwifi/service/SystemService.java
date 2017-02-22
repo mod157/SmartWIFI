@@ -1,8 +1,5 @@
 package com.nammu.smartwifi.service;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
@@ -14,13 +11,14 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
-import android.support.v7.app.NotificationCompat;
 
-import com.nammu.smartwifi.R;
-import com.nammu.smartwifi.WifiAudioManager;
 import com.nammu.smartwifi.model.OnInterface;
 import com.nammu.smartwifi.model.SLog;
-import com.nammu.smartwifi.model.WifiScan;
+import com.nammu.smartwifi.model.ServiceEvent;
+import com.nammu.smartwifi.model.manager.WifiAudioManager;
+import com.nammu.smartwifi.model.manager.WifiBrightManager;
+import com.nammu.smartwifi.model.manager.WifiNotificationManager;
+import com.nammu.smartwifi.model.manager.WifiScan;
 import com.nammu.smartwifi.realmdb.RealmDB;
 import com.nammu.smartwifi.realmdb.realmobject.WifiData;
 import com.nammu.smartwifi.realmdb.realmobject.WifiDataState;
@@ -38,21 +36,25 @@ import io.realm.RealmResults;
  * Created by SunJae on 2017-02-08.
  */
 
-public class SystemService extends Service {
+public class SystemService extends Service implements ServiceEvent.changeNotificationEventListener {
     private final int DELAY_MAX = 20; // 5분
     private final int DELAY_ADD = 2;
     private final int SCAN_TIME = 15000;
+    private final int INIT_SAVETIME = 1;
     private WifiAudioManager wifiAudioManager;
+    private WifiNotificationManager wifiNotificationManager;
+    private WifiBrightManager brightManager;
     private WifiManager wm;
     private WifiScan wifiScan;
     private Handler scanHandler;
-    private int saveTime = 1;
+    private int saveTime = INIT_SAVETIME;
     private WifiDataState initData;
     private String lastSSID = "";
     private boolean flag = false;
     private  Realm realm;
     private ArrayList<WifiData> results;
-    private int resultsItemNumber = 0;
+    private int resultsItemNumber;
+    private Thread serviceThread;
 
     @Override
     public void onCreate() {
@@ -60,10 +62,14 @@ public class SystemService extends Service {
         SLog.d("Start Service");
         realm = RealmDB.RealmInit(this);
         wifiAudioManager = WifiAudioManager.getInstance();
+        wifiNotificationManager = new WifiNotificationManager(this);
         wm = (WifiManager) getSystemService(WIFI_SERVICE);
+        brightManager = new WifiBrightManager(this);
+        ServiceEvent.getInstance(this);
         wifiScan = new WifiScan(this, wm, wifiScanResultInterface);
         initData = new WifiDataState();
         scanHandler = new Handler();
+        serviceThread =
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -73,7 +79,8 @@ public class SystemService extends Service {
                     delay();
                 scanHandler.postDelayed(this, SCAN_TIME * saveTime);
             }
-        }).start();
+        });
+        serviceThread.start();
     }
     private boolean checkingAddList(){
         Realm sizeRealm = RealmDB.RealmInit(getBaseContext());
@@ -97,7 +104,8 @@ public class SystemService extends Service {
             wifiScan.sortLevelResult(scanList);
             results = new ArrayList<>();
             scanListEqualBSSID(scanList, results);
-
+            HashSet<WifiData> hashSet = new HashSet<>(results);
+            results = new ArrayList<>(hashSet);
             if(results.size() != 0) {
                 sortPripority(results);
                 for(int i = 0 ; i < results.size(); i++) {
@@ -106,20 +114,13 @@ public class SystemService extends Service {
                 }
                 for (int i = 0; i < results.size(); i++) {
                     WifiData item = results.get(i);
-                    boolean ssidCheck = wm.getConnectionInfo().getSSID().equals("\"" + item.getSSID() + "\"");
 
-                    if(lastSSID.equals(item.getSSID())){
+                    SLog.d(lastSSID + " : " + results.get(i+resultsItemNumber).getSSID());
+                    if(lastSSID.equals(results.get(i+resultsItemNumber).getSSID()) && flag){
                         SLog.d("이미 연결됨 " + wm.getConnectionInfo().getSSID() + " : " + item.getSSID());
                         delay();
                         return;
                     }
-
-                   /* if (!ssidCheck && flag) {
-                        //TODO 사용자가 직접 변경?
-                        SLog.d("직접 변경");
-                        //otification_button(item.getSSID(), results);
-                        return;
-                    }*/
 
                     //초기화 작업
                     if (!flag)
@@ -133,7 +134,7 @@ public class SystemService extends Service {
             if(flag) {
                 SLog.d("주변에 와이파이가 없음");
                 setSetting(initData, lastSSID);
-                notification("없음");
+                wifiNotificationManager.notification("없음","");
                 flag = false;
             }
         }
@@ -141,16 +142,18 @@ public class SystemService extends Service {
 
     private void addItemWifiConnection(ArrayList<WifiData> results){
         SLog.d("Setting");
+
         if(results.size() == resultsItemNumber)
             resultsItemNumber = 0;
-        flag = true;
 
+        flag = true;
+        SLog.d(results.size() + " : " + resultsItemNumber+"");
         WifiData item = results.get(resultsItemNumber);
         lastSSID = item.getSSID();
         WifiDataState data_state = realm.where(WifiDataState.class).equalTo("BSSID",item.getBSSID()).findFirst();
         setSetting(data_state, item.getSSID());
-        //TODO noti set
-        setNotification(item.getSSID(), results);
+
+        setNotification(item.getSSID(), results );
         saveTime = 1;
     }
 
@@ -165,7 +168,7 @@ public class SystemService extends Service {
     }
 
     private void delay(){
-        SLog.d("dealy");
+        SLog.d("dealy" + saveTime * 2);
         saveTime *= DELAY_ADD;
         if(saveTime > DELAY_MAX)
             saveTime = DELAY_MAX;
@@ -181,14 +184,7 @@ public class SystemService extends Service {
         initData.setSoundState(true);
         initData.setSoundSize(audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM));
         initData.setBrightState(true);
-        try {
-            if (Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE) != 0) {
-                Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, 0);
-            }
-            initData.setBrightSize(Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS));
-        } catch (Settings.SettingNotFoundException e) {
-            e.printStackTrace();
-        }
+        initData.setBrightSize(brightManager.getBrightSize());
     }
 
     private void setSetting(WifiDataState data_state, String ssid){
@@ -201,28 +197,18 @@ public class SystemService extends Service {
             BluetoothConnection();
         }
         if(data_state.getSoundState()) {
-            SoundSet(data_state.getSoundSize());
+            SLog.d("Sound");
+            wifiAudioManager.setSystemVolume(data_state.getSoundSize());
         }
         if(data_state.getBrightState()){
-            BrightSet(data_state.getBrightSize());
+            Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, data_state.getBrightSize());
         }
     }
-
 
     private void BluetoothConnection(){
         SLog.d("Blue");
         BluetoothAdapter blueAdapter = BluetoothAdapter.getDefaultAdapter();
         blueAdapter.enable();
-    }
-
-    private void SoundSet(int size){
-        SLog.d("Sound");
-        wifiAudioManager.setSystemVolume(size);
-    }
-
-    private void BrightSet(int size){
-        SLog.d("Bright");
-        Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, size);
     }
 
     private void scanListEqualBSSID(List<ScanResult> scanList, ArrayList<WifiData> results){
@@ -250,147 +236,46 @@ public class SystemService extends Service {
 
     private void setNotification(String ssid, ArrayList<WifiData> itemList){
         if (results.size() == 1)
-            notification(ssid);
+            wifiNotificationManager.notification(itemList.get(resultsItemNumber).getName(), ssid);
         else
-            notification_button(ssid, itemList);
+            wifiNotificationManager.notification(ssid, itemList, resultsItemNumber);
     }
 
-    private void notification_button(String ssid, ArrayList<WifiData> itemList){
-        ArrayList<String> ssidList = new ArrayList<>();
-        for(int j = 0; j<itemList.size(); j++){ //SSID 중복 제거 (맥주소 통일화)
-            WifiData item = itemList.get(j);
-            if(item.getSSID().equals(""))
-                continue;
-            ssidList.add(item.getSSID());
-        }
-        ArrayList<String> wifilist = new ArrayList(new HashSet(ssidList));
-        for(int i = 0; i< wifilist.size(); i++){
-            SLog.d("Noti value :  " + wifilist.get(i));
-        }
-
-        //TODO intent로 broadcast로 던져준다.
-        Intent intent = new Intent("setChangeWifiConnection");
-        PendingIntent pIntent = PendingIntent.getBroadcast(this,0,intent,0);
-        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        // 알림 객체 생성
-        Notification noti = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.cogwheel_1)
-                .setTicker("실행 중")
-                .setContentTitle("WIFI Change - '" + ssid + "'")
-                .setContentText("다른 '" + (wifilist.size()-1) +"' 개 존재합니다.")
-                .setWhen(System.currentTimeMillis())
-                .addAction(R.drawable.clickborder,"변경",pIntent)
-                .build();
-
-        // 알림 방식 지정
-        //TODO 설정값에 다른 사운드
-        if(true)
-            noti.defaults |= Notification.DEFAULT_SOUND;
-        noti.flags = Notification.FLAG_NO_CLEAR;
-        nm.notify(100, noti);
+    @Override
+    public void onChangeConnection() {
+        resultsItemNumber++;
+        addItemWifiConnection(results);
+        SLog.d("onChangeConnection : " + resultsItemNumber);
     }
 
-    private void notification(String ssid){
-        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        // 알림 객체 생성
-        Notification noti = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.cogwheel_1)
-                .setTicker("실행 중")
-                .setContentTitle("WIFI Change - '" + ssid + "'") //와이파이 ssid값 뽑아야
-               // .setContentText("'" + setResult.get(0) +"'") //와이파이 name 뽑아야
-                .setWhen(System.currentTimeMillis())
-                .build();
-
-        // 알림 방식 지정
-        //TODO 설정값에 다른 사운드
-        if(true)
-            noti.defaults |= Notification.DEFAULT_SOUND;
-        noti.flags = Notification.FLAG_NO_CLEAR;
-        nm.notify(100, noti);
-
-    }
-    /* public static void remindUserBecauseCharging(Context context) {
-
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
-                .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
-                .setSmallIcon(R.drawable.ic_drink_notification)
-                .setLargeIcon(largeIcon(context))
-                .setContentTitle(context.getString(R.string.charging_reminder_notification_title))
-                .setContentText(context.getString(R.string.charging_reminder_notification_body))
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(
-                        context.getString(R.string.charging_reminder_notification_body)))
-                .setDefaults(Notification.DEFAULT_VIBRATE)
-                .setContentIntent(contentIntent(context))
-                // COMPLETED (17) Add the two new actions using the addAction method and your helper methods
-                .addAction(drinkWaterAction(context))
-                .addAction(ignoreReminderAction(context))
-                .setAutoCancel(true);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            notificationBuilder.setPriority(Notification.PRIORITY_HIGH);
-        }
-
-
-        NotificationManager notificationManager = (NotificationManager)
-                context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-    notificationManager.notify(WATER_REMINDER_NOTIFICATION_ID, notificationBuilder.build());
-}
-
-    private static android.support.v4.app.NotificationCompat.Action ignoreReminderAction(Context context) {
-        Intent ignoreReminderIntent = new Intent(context, WaterReminderIntentService.class);
-        ignoreReminderIntent.setAction(ReminderTasks.ACTION_DISMISS_NOTIFICATION);
-        PendingIntent ignoreReminderPendingIntent = PendingIntent.getService(
-                context,
-                ACTION_IGNORE_PENDING_INTENT_ID,
-                ignoreReminderIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-        android.support.v4.app.NotificationCompat.Action ignoreReminderAction = new android.support.v4.app.NotificationCompat.Action(R.drawable.ic_cancel_black_24px,
-                "No, thanks.",
-                ignoreReminderPendingIntent);
-        return ignoreReminderAction;
+    @Override
+    public void onServiceStop() {
+        scanHandler.removeCallbacksAndMessages(null);
+        SLog.d("Thread Stop");
     }
 
-    private static android.support.v4.app.NotificationCompat.Action drinkWaterAction(Context context) {
-        Intent incrementWaterCountIntent = new Intent(context, WaterReminderIntentService.class);
-        incrementWaterCountIntent.setAction(ReminderTasks.ACTION_INCREMENT_WATER_COUNT);
-        PendingIntent incrementWaterPendingIntent = PendingIntent.getService(
-                context,
-                ACTION_DRINK_PENDING_INTENT_ID,
-                incrementWaterCountIntent,
-                PendingIntent.FLAG_CANCEL_CURRENT);
-        android.support.v4.app.NotificationCompat.Action drinkWaterAction = new android.support.v4.app.NotificationCompat.Action(R.drawable.ic_local_drink_black_24px,
-                "I did it!",
-                incrementWaterPendingIntent);
-        return drinkWaterAction;
+    @Override
+    public void onServiceStart() {
+        flag = false;
+        saveTime = INIT_SAVETIME;
+        resultsItemNumber = 0;
+        scanHandler.postDelayed(serviceThread,0);
+        
+        SLog.d("Thread start");
     }
 
-    private static PendingIntent contentIntent(Context context) {
-        Intent startActivityIntent = new Intent(context, MainActivity.class);
-        return PendingIntent.getActivity(
-                context,
-                WATER_REMINDER_PENDING_INTENT_ID,
-                startActivityIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-    }
-
-    private static Bitmap largeIcon(Context context) {
-        Resources res = context.getResources();
-        Bitmap largeIcon = BitmapFactory.decodeResource(res, R.drawable.ic_local_drink_black_24px);
-        return largeIcon;
-    }*/
-
-    public interface changeWifiConnection{
-        public void setChangeWifiConnection(int num);
-    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         return super.onStartCommand(intent, flags, startId);
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
+        SLog.d("Service finish");
+        if(serviceThread.isAlive())
+            serviceThread.stop();
     }
 
     @Nullable

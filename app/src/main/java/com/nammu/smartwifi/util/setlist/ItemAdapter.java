@@ -13,11 +13,10 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.nammu.smartwifi.R;
-import com.nammu.smartwifi.util.setdata.SetActivity;
-import com.nammu.smartwifi.util.setlist.dialog.RecyclerMenuDialog;
 import com.nammu.smartwifi.model.SLog;
 import com.nammu.smartwifi.realmdb.RealmDB;
 import com.nammu.smartwifi.realmdb.realmobject.WifiData;
+import com.nammu.smartwifi.util.setdata.SetActivity;
 
 import java.util.ArrayList;
 
@@ -25,7 +24,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
-import butterknife.OnLongClick;
 
 /**
  * Created by SunJae on 2017-02-06.
@@ -69,9 +67,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
         return itemList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private Context context;
-        private RecyclerMenuDialog dialog;
         @BindView(R.id.img_delete)
         ImageView iv_delete;
         @BindView(R.id.tv_rec_WifiName)
@@ -83,7 +80,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
 
         @OnCheckedChanged(R.id.sw_item)
         public void checkedChange(CompoundButton compoundButton, boolean isCheck) {
-            if(isCheck)
+            if (isCheck)
                 tv_wifiName.setTextColor(Color.parseColor("#000000"));
             else
                 tv_wifiName.setTextColor(Color.GRAY);
@@ -96,21 +93,22 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
             ButterKnife.bind(this, itemView);
         }
 
-        private void isWifi_state(boolean isCheck){
+        private void isWifi_state(boolean isCheck) {
             WifiData data = itemList.get(getPosition());
-            if(data.getisPlay() != isCheck)
-                RealmDB.InsertOrUpdate_Data(context,data, isCheck);
+            if (data.getisPlay() != isCheck)
+                RealmDB.InsertOrUpdate_Data(context, data, isCheck);
         }
 
-        private void setActivityStart(){
+        private void setActivityStart() {
             MainActivity.VIEW_EDIT = true;
             SLog.d("isPlay :" + itemList.get(getPosition()).getisPlay());
             Intent intent = new Intent(context, SetActivity.class);
             intent.putExtra("Edit_WifiData", itemList.get(getPosition()));
             context.startActivity(intent);
         }
+
         @OnClick(R.id.img_delete)
-        public void deleteClick(View view){
+        public void deleteClick(View view) {
             int position = getPosition();
             RealmDB.deleteData(context, itemList.get(position));
             itemList.remove(position);
@@ -123,43 +121,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
         public void onClick(View view) {
             setActivityStart();
         }
-
-        @OnLongClick(R.id.linear_item)
-        @Override
-        public boolean onLongClick(View view) {
-            dialog = new RecyclerMenuDialog(context, itemList.get(getPosition()),
-                    stateClickListener,editClickListener,deleteClickListener);
-            dialog.show();
-            return false;
-        }
-
-        View.OnClickListener stateClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                isWifi_state(!sw_wifistate.isChecked());
-                dialog.cancel();
-                notifyItemChanged(getPosition());
-            }
-        };
-
-        View.OnClickListener editClickListener = new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                setActivityStart();
-                dialog.cancel();
-            }
-        };
-
-        View.OnClickListener deleteClickListener = new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                int position = getPosition();
-                RealmDB.deleteData(context, itemList.get(getPosition()));
-                dialog.cancel();
-                itemList.remove(position);
-                notifyItemRemoved(position);
-                notifyItemRangeChanged(position, itemList.size());
-            }
-        };
     }
+
 }

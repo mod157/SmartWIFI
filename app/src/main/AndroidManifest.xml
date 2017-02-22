@@ -30,7 +30,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".util.setdata.SetActivity"/>
-        <service android:name=".service.SystemService" />
+        <service android:name=".service.SystemService">
+        <intent-filter>
+            <action android:name="SmartWIFI.SystemService"/>
+            <category android:name="android.intent.category.DEFAULT"/>
+        </intent-filter>
+        </service>
         <receiver android:name=".broadcast.broadCastReceiver"
             android:enabled="true"
             android:exported="false"
@@ -38,6 +43,8 @@
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="setChangeWifiConnection" />
+                <action android:name="stopService"/>
+                <action android:name="startService"/>
              </intent-filter>
         </receiver>
     </application>

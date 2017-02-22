@@ -16,7 +16,7 @@
     <color name="fabRipple">#AED6FC</color>
 
     <!-- level color-->
-    <color name="LevelGood">#00FF00</color>
+    <color name="LevelGood">#55FF34</color>
     <color name="LevelNormal">#FFFF00</color>
     <color name="LevelLow">#FF0000</color>
 

@@ -12,7 +12,7 @@
         <ImageView
             android:layout_width="50dp"
             android:layout_height="match_parent"
-            app:srcCompat="@android:drawable/bottom_bar"
+            app:srcCompat="@drawable/remove_btn"
             android:id="@+id/img_delete"
             android:padding="10dp"
             android:visibility="gone" />
@@ -30,16 +30,19 @@
             android:layout_height="wrap_content"
             android:id="@+id/tv_rec_WifiName"
             android:textSize="25dp"
+            android:singleLine="true"
             android:marqueeRepeatLimit="marquee_forever"
             android:textColor="@color/Black"
             android:layout_weight="1"
             android:paddingLeft="10dp" />
+
         <TextView
             android:text="Wifi SSID"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/tv_rec_WifiSSID"
             android:textSize="18dp"
+            android:singleLine="true"
             android:marqueeRepeatLimit="marquee_forever"
             android:textColor="@color/gray"
             android:layout_weight="1"

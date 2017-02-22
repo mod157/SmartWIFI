@@ -1,4 +1,4 @@
-package com.nammu.smartwifi;
+package com.nammu.smartwifi.model.manager;
 
 import android.content.Context;
 import android.media.AudioManager;
@@ -33,10 +33,21 @@ public class WifiAudioManager {
     public void setRingerMode(int mode){
           audioManager.setRingerMode(mode);
     }
-
     public int getRingerMode(){
         return audioManager.getRingerMode();
     }
+    public int getRingerModeInt(){
+        int modeInt = 0;
+        switch(wifiAudioManager.getRingerMode()) {
+            //무음
+            case AudioManager.RINGER_MODE_SILENT: modeInt = 0;
+            //진동
+            case AudioManager.RINGER_MODE_VIBRATE:modeInt = -1;
+            case  AudioManager.RINGER_MODE_NORMAL:modeInt = getSystemVolume();
+        }
+        return modeInt;
+    }
+
     public int getSystemVolume(){
         return audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
     }

@@ -25,7 +25,7 @@ import com.nammu.smartwifi.model.WifiListItem;
 import com.nammu.smartwifi.util.setlist.MainActivity;
 import com.nammu.smartwifi.model.OnInterface;
 import com.nammu.smartwifi.model.SLog;
-import com.nammu.smartwifi.model.WifiScan;
+import com.nammu.smartwifi.model.manager.WifiScan;
 import com.nammu.smartwifi.realmdb.realmobject.WifiData;
 
 import java.util.ArrayList;
@@ -98,7 +98,7 @@ public class SetFragment extends Fragment {
     };
 
     @OnClick(R.id.btn_set_Success)
-    public void SetButtonClick(View view){
+    public void setButtonClick(View view){
         SLog.d("Button Click");
         if(isChecking()) {
             mCallback.onChangeFragment(data);

@@ -12,40 +12,55 @@ public class WifiDataState extends RealmObject{
     @PrimaryKey
     @Required
     private String BSSID;
-    private boolean Wifi_State;
-    private boolean Bluetooth_State;
+    private boolean WifiState;
+    private boolean BluetoothState;
     //진동까지 할것인지 포함
-    private boolean Sound_State;
-    private int Sound_Size;
-    private boolean Bright_State;
-    private int Bright_Size;
+    private boolean SoundState;
+    private int SoundSize;
+    private boolean BrightState;
+    private int BrightSize;
+
+
+
+    public WifiDataState(){}
+    public WifiDataState(String BSSID, boolean WIFI_STATE, boolean BLUETOOTH_STATE,
+                              boolean SOUND_STATE, boolean BRIGHT_STATE, int soundSize, int brightSize){
+        this.BSSID = BSSID;
+        WifiState = WIFI_STATE;
+        BluetoothState = BLUETOOTH_STATE;
+        SoundState = SOUND_STATE;
+        BrightState = BRIGHT_STATE;
+        SoundSize = soundSize;
+        BrightSize = brightSize;
+    }
+
     public void setBSSID(String bssid){
         BSSID = bssid;
     }
     public void setWifiState(boolean wifi_state){
-        Wifi_State = wifi_state;
+        WifiState = wifi_state;
     }
     public void setBluetoothState(boolean bluetooth_state){
-        Bluetooth_State = bluetooth_state;
+        BluetoothState = bluetooth_state;
     }
     public void setSoundState(boolean sound_state){
-        Sound_State = sound_state;
+        SoundState = sound_state;
     }
     public void setSoundSize(int sound_size){
-        Sound_Size = sound_size;
+        SoundSize = sound_size;
     }
     public void setBrightState(boolean bright_state){
-        Bright_State = bright_state;
+        BrightState = bright_state;
     }
     public void setBrightSize(int bright_size){
-        Bright_Size = bright_size;
+        BrightSize = bright_size;
     }
 
     public String getBSSID(){return BSSID;}
-    public boolean getWifiState(){return Wifi_State;}
-    public boolean getBluetoothState(){return Bluetooth_State;}
-    public boolean getSoundState(){return Sound_State;}
-    public int getSoundSize(){return Sound_Size;}
-    public boolean getBrightState(){return Bright_State;}
-    public int getBrightSize(){return Bright_Size;}
+    public boolean getWifiState(){return WifiState;}
+    public boolean getBluetoothState(){return BluetoothState;}
+    public boolean getSoundState(){return SoundState;}
+    public int getSoundSize(){return SoundSize;}
+    public boolean getBrightState(){return BrightState;}
+    public int getBrightSize(){return BrightSize;}
 }

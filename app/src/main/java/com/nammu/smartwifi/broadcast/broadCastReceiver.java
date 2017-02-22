@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import com.nammu.smartwifi.model.ServiceEvent;
+import com.nammu.smartwifi.model.manager.WifiNotificationManager;
 import com.nammu.smartwifi.model.SLog;
 import com.nammu.smartwifi.service.SystemService;
 
@@ -12,11 +14,8 @@ import com.nammu.smartwifi.service.SystemService;
  */
 
 public class broadCastReceiver extends BroadcastReceiver {
-
-   /* broadCastReceiver(){
-        SLog.d("broadcast create");
-    }*/
-
+    private WifiNotificationManager wifiNotificationManager;
+    private ServiceEvent.changeNotificationEventListener eventListener;
     @Override
     public void onReceive(Context context, Intent intent) {
         SLog.d("Receive");
@@ -30,8 +29,27 @@ public class broadCastReceiver extends BroadcastReceiver {
 
         if(action.equals("setChangeWifiConnection")){
             SLog.d("broadCast Success");
-          //  SystemService.changeWifiConnection change = intent.getExtras();
+            initialSet(context);
+            eventListener.onChangeConnection();
         }
 
+        if(action.equals("stopService")){
+            SLog.d("stopService");
+            initialSet(context);
+            eventListener.onServiceStop();
+            wifiNotificationManager.notification("중지","");
+        }
+
+        if(action.equals("startService")) {
+            SLog.d("startService");
+            initialSet(context);
+            eventListener.onServiceStart();
+            wifiNotificationManager.notification("실행","");
+        }
+    }
+
+    private void initialSet(Context context){
+        wifiNotificationManager = new WifiNotificationManager(context);
+        eventListener = ServiceEvent.getInstance();
     }
 }
