@@ -40,7 +40,7 @@
                 android:layout_weight="1" />
 
             <ImageView
-                app:srcCompat="@drawable/shape_button"
+                app:srcCompat="@drawable/star"
                 android:id="@+id/iv_dialog_save"
                 android:layout_height="20dp"
                 android:layout_width="20dp"

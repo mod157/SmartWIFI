@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         //리스트 보여주는 형태
         Intent intent = new Intent(MainActivity.this, SetActivity.class);
         VIEW_EDIT = false;
+        deleteMode = false;
         startActivity(intent);
     }
 
@@ -87,6 +88,13 @@ public class MainActivity extends AppCompatActivity {
         }
         ItemAdapter adapter = new ItemAdapter(itemList, this, deleteMode);
         recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        deleteMode = false;
+        ListView();
     }
 
     @Override

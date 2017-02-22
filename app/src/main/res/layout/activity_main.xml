@@ -52,10 +52,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
         android:layout_margin="16dp"
-        android:src="@drawable/switch_custom_image"
         android:scaleType="fitCenter"
         app:fab_colorNormal="@color/fabPrimary"
         app:fab_colorPressed="@color/fabPressed"
-        app:fab_colorRipple="@color/fabRipple" />
+        app:fab_colorRipple="@color/fabRipple"
+        android:src="@drawable/switch_custom_image" />
 
 </FrameLayout>
