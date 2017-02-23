@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>New Age - Start Bootstrap Theme</title>
+    <title>WIFI 자동화 파이캐치</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -26,7 +26,9 @@
 
     <!-- Theme CSS -->
     <link href="css/new-age.min.css" rel="stylesheet">
-
+    <style>
+    		#back{ width:1300px; height:600px; background-image:url(img/menu_back.jpg); }
+    </style>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -45,17 +47,17 @@
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                     <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
                 </button>
-                <a class="navbar-brand page-scroll" href="#page-top">WIFI 자동화 파이캐치</a>
+                <a class="navbar-brand page-scroll" href="#page-top">파이캐치(FI Catch)</a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a class="page-scroll" href="#download">Download</a>
+                        <a class="page-scroll" href="#download">소개</a>
                     </li>
                     <li>
-                        <a class="page-scroll" href="#features">Features</a>
+                        <a class="page-scroll" href="#features"></a>
                     </li>
                     <li>
                         <a class="page-scroll" href="#contact">Contact</a>
@@ -73,8 +75,26 @@
                 <div class="col-sm-7">
                     <div class="header-content">
                         <div class="header-content-inner">
-                            <h1>New Age is an app landing page that will help you beautifully showcase your new mobile app, or anything else!</h1>
-                            <a href="#download" class="btn btn-outline btn-xl page-scroll">Start Now for Free!</a>
+                            <h1>
+                              <!--img src="img/demo-screen-1.jpg" class="img-responsive" alt="">
+-->                           파이 캐치
+                              (FI Catch)
+                              <BR><BR></h1>
+                                <h2>
+                              WIFI 연결을 까먹고 <strong>데이터</strong>를 사용
+                              <BR>
+                               도서관에서 울리는 휴대폰 <strong>벨소리</strong>
+                               <br>
+                              <BR>
+
+                              <strong>
+                                단 한번의 설정으로 편하게 연결하고 변경하자!
+
+                              </strong>
+                              <br>
+                              <br>
+                            </h2>
+                            <a href="#download" class="btn btn-outline btn-xl page-scroll">Start!</a>
                         </div>
                     </div>
                 </div>
@@ -84,7 +104,7 @@
                             <div class="device">
                                 <div class="screen">
                                     <!-- Demo image for screen mockup, you can put an image here, some HTML, an animation, video, or anything else! -->
-                                    <img src="img/demo-screen-1.jpg" class="img-responsive" alt="">
+                                    <img src="img/title_img.jpg" class="img-responsive" alt="">
                                 </div>
                                 <div class="button">
                                     <!-- You can hook the "home button" to some JavaScript events or just remove it -->
@@ -96,20 +116,47 @@
             </div>
         </div>
     </header>
-
+<!--
     <section id="download" class="download bg-primary text-center">
         <div class="container">
             <div class="row">
+                <img src="img/plan_1.png"/>
                 <div class="col-md-8 col-md-offset-2">
-                    <h2 class="section-heading">Discover what all the buzz is about!</h2>
-                    <p>Our app is available on any mobile device! Download now to get started!</p>
-                    <div class="badges">
-                        <a class="badge-link" href="#"><img src="img/google-play-badge.svg" alt=""></a>
-                        <a class="badge-link" href="#"><img src="img/app-store-badge.svg" alt=""></a>
-                    </div>
+                    <h2 class="section-heading">집 가서 연결하고,<BR> 학교가서 연결하고</h2>
+                    <p>단 한번의 등록으로 원하는 곳마다 WIFI를 자동 연결, 핸드폰의 설정을 변경해줍니다.</p>
                 </div>
             </div>
         </div>
+    </section>
+-->
+
+    <section id="planning" class="download bg-primary text-center">
+        <div class="container" background-="img/back.jpg">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="section-heading">
+                        <h2>기획 의도</h2>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+              <img src="img/plan_1.png"/>
+              <div class="col-lg-12 text-center">
+                      <div class="section-heading">
+                        <p>  <h3>사용자들의 데이터 사용량이 많아지면서 실수로 WIFI를 연결하지 않고 <br>이용하다 <strong>과도한 요금</strong>을 청구 받을 수 있다.</h3></p>
+                          <hr>
+                          <hr>
+                      </div>
+                </div>
+                <div class="row">
+              <img src="img/plan_2.png"/>
+              <div class="col-lg-12 text-center">
+                      <div class="section-heading">
+                          <p><h3>이용하는 곳마다 휴대폰의 <strong>설정</strong>을 바꿔주어야 한다.</h3></p>
+                          <hr>
+                      </div>
+                </div>
     </section>
 
     <section id="features" class="features">
@@ -117,8 +164,8 @@
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <div class="section-heading">
-                        <h2>Unlimited Features, Unlimited Fun</h2>
-                        <p class="text-muted">Check out what you can do with this app theme!</p>
+                        <h2>파이캐치 소개</h2>
+                        <p class="text-muted">어떻게 이용하는가?</p>
                         <hr>
                     </div>
                 </div>
@@ -130,7 +177,7 @@
                             <div class="device">
                                 <div class="screen">
                                     <!-- Demo image for screen mockup, you can put an image here, some HTML, an animation, video, or anything else! -->
-                                    <img src="img/demo-screen-1.jpg" class="img-responsive" alt=""> </div>
+                                    <img src="img/title_img.jpg" class="img-responsive" alt=""> </div>
                                 <div class="button">
                                     <!-- You can hook the "home button" to some JavaScript events or just remove it -->
                                 </div>
@@ -143,32 +190,36 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="feature-item">
-                                    <i class="icon-screen-smartphone text-primary"></i>
-                                    <h3>Device Mockups</h3>
-                                    <p class="text-muted">Ready to use HTML/CSS device mockups, no Photoshop required!</p>
+                                    <br><br><br><br><br>
+                                    <img src="img/wifi.png"/>
+                                    <h3>WIFI 연결/해제</h3>
+                                    <p class="text-muted">원하는 WIFI를 선택하고 연결 여부를 선택 할 수 있습니다.</p>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="feature-item">
-                                    <i class="icon-camera text-primary"></i>
-                                    <h3>Flexible Use</h3>
-                                    <p class="text-muted">Put an image, video, animation, or anything else in the screen!</p>
+                                    <br><br><br><br><br>
+                                    <img src="img/bluetooth.png"/>
+                                    <h3>블루투스 연결/해제</h3>
+                                    <p class="text-muted">블루투스 연결/해제 설정을 할 수 있습니다.</p>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="feature-item">
-                                    <i class="icon-present text-primary"></i>
-                                    <h3>Free to Use</h3>
-                                    <p class="text-muted">As always, this theme is free to download and use for any purpose!</p>
+                                    <br>
+                                    <img src="img/audio.png"/>
+                                    <h3>벨소리 조절</h3>
+                                    <p class="text-muted">원하는 벨소리(진동, 무음)으로 설정 할 수 있습니다.</p>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="feature-item">
-                                    <i class="icon-lock-open text-primary"></i>
-                                    <h3>Open Source</h3>
-                                    <p class="text-muted">Since this theme is MIT licensed, you can use it commercially!</p>
+                                    <br>
+                                      <img src="img/bright.png"/>
+                                    <h3>밝기 조절</h3>
+                                    <p class="text-muted">원하는 밝기로 휴대폰의 밝기를 설정 할 수 있습니다.</p>
                                 </div>
                             </div>
                         </div>
@@ -177,7 +228,45 @@
             </div>
     </section>
 
+
+
+    <section id="back" class="download bg-primary text-center">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12 text-center">
+                        <div class="section-heading">
+                            <h2>메인 화면</h2>
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+
+                    <div class="col-md-4">
+                        <div class="device-container">
+                            <div class="device-mockup iphone6_plus portrait white">
+                                <div class="device">
+                                    <div class="screen">
+                                        <!-- Demo image for screen mockup, you can put an image here, some HTML, an animation, video, or anything else! -->
+                                        <img src="img/demo-screen-1.jpg" class="img-responsive" alt=""> </div>
+                                    <div class="button">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+              </div>
+        </section>
+
+
+    <iframe id="gangnamStyleIframe" width="100%" height="100%"
+     src="https://www.youtube.com/embed/9bZkp7q19f0?rel=0&enablejsapi=1"
+      frameborder="0"
+       allowfullscreen>
+     </iframe>
     <section class="cta">
+
         <div class="cta-content">
             <div class="container">
                 <h2>Stop waiting.<br>Start building.</h2>
@@ -186,6 +275,7 @@
         </div>
         <div class="overlay"></div>
     </section>
+
 
     <section id="contact" class="contact bg-primary">
         <div class="container">
@@ -203,8 +293,7 @@
             </ul>
         </div>
     </section>
-
-    <footer>
+  <footer>
         <div class="container">
             <p>&copy; 2016 Start Bootstrap. All Rights Reserved.</p>
             <ul class="list-inline">
