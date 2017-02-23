@@ -20,7 +20,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Created by SunJae on 2017-02-13.
+ *   Created by SunJae on 2017-02-13.
  */
 
 public class WifiListDialog extends Dialog {
