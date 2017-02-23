@@ -53,10 +53,14 @@ public class SetActivity extends AppCompatActivity implements SetFragment.OnChan
         Fragment fragment = getSupportFragmentManager().findFragmentByTag("detail");
         if (SetActivity.ResetFragmentListener.class.isAssignableFrom(fragment.getClass())) {
             SLog.d("Fragment Refresh");
-           SetActivity.ResetFragmentListener resetFragmentListener = (SetActivity.ResetFragmentListener) fragment;
+            SetActivity.ResetFragmentListener resetFragmentListener = (SetActivity.ResetFragmentListener) fragment;
             resetFragmentListener.updateView();
         }
         SLog.d("Not Fragment");
+    }
+
+    public void toolbarImageInvisible() {
+        iv_toolbar.setVisibility(View.INVISIBLE);
     }
 
     public interface ResetFragmentListener{

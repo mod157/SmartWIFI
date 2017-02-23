@@ -20,7 +20,7 @@
             android:id="@+id/iv_toolbar"
             android:layout_marginRight="10dp"
             android:visibility="gone"
-            app:srcCompat="@drawable/arrows" />
+            app:srcCompat="@drawable/refresh_32" />
     </android.support.v7.widget.Toolbar>
     <fragment
         android:id="@+id/fragment_set"

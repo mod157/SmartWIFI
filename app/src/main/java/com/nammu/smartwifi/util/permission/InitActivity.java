@@ -18,8 +18,6 @@ import java.util.ArrayList;
 
 
 public class InitActivity extends AppCompatActivity {
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,12 +34,9 @@ public class InitActivity extends AppCompatActivity {
     private void securityPermission(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (Settings.System.canWrite(this)) {
-              //  Toast.makeText(this, "onCreate: Already Granted", Toast.LENGTH_SHORT).show();
-
                 Intent intent = new Intent(InitActivity.this, MainActivity.class);
                 startActivity(intent);
             } else {
-               // Toast.makeText(this, "onCreate: Not Granted. Permission Requested", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(android.provider.Settings.ACTION_MANAGE_WRITE_SETTINGS);
                 intent.setData(Uri.parse("package:" + this.getPackageName()));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

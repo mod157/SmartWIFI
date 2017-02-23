@@ -29,7 +29,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".util.setdata.SetActivity"/>
+        <activity android:name=".util.setdata.SetActivity"
+            android:screenOrientation="portrait" />
         <service android:name=".service.SystemService">
         <intent-filter>
             <action android:name="SmartWIFI.SystemService"/>
@@ -43,9 +44,6 @@
             android:label="STARTReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="setChangeWifiConnection" />
-                <action android:name="stopService"/>
-                <action android:name="startService"/>
              </intent-filter>
         </receiver>
     </application>

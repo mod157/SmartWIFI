@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SmartWifi</string>
+    <string name="app_name">파이캐치</string>
     <string name="title_activity_main">목록</string>
     <string name="title_activity_add">추가</string>
     <string name="title_activity_edit">변경</string>

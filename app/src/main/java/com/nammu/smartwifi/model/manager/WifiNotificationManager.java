@@ -92,7 +92,7 @@ public class WifiNotificationManager {
     private void noti(String ssid, String contentText, NotificationCompat.Action stopAction, NotificationCompat.Action changeAction){
         int color = 0xff3F51B5;
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
-                .setSmallIcon(R.drawable.notiicon)
+                .setSmallIcon(R.drawable.ic_stat_name)
                 .setTicker("Service Set")
                 .setContentTitle("WIFI - '" + ssid + "'")
                 .setContentText(contentText)

@@ -4,8 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.nammu.smartwifi.model.ServiceEvent;
-import com.nammu.smartwifi.model.manager.WifiNotificationManager;
 import com.nammu.smartwifi.model.SLog;
 import com.nammu.smartwifi.service.SystemService;
 
@@ -14,8 +12,6 @@ import com.nammu.smartwifi.service.SystemService;
  */
 
 public class broadCastReceiver extends BroadcastReceiver {
-    private WifiNotificationManager wifiNotificationManager;
-    private ServiceEvent.changeNotificationEventListener eventListener;
     @Override
     public void onReceive(Context context, Intent intent) {
         SLog.d("Receive");
@@ -26,10 +22,5 @@ public class broadCastReceiver extends BroadcastReceiver {
             Intent service = new Intent(context, SystemService.class);
             context.startService(service);
         }
-    }
-
-    private void initialSet(Context context){
-        wifiNotificationManager = new WifiNotificationManager(context);
-        eventListener = ServiceEvent.getInstance();
     }
 }

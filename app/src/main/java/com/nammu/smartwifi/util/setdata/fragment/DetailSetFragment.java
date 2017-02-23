@@ -1,5 +1,6 @@
 package com.nammu.smartwifi.util.setdata.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -36,7 +38,6 @@ import io.realm.Realm;
  * Created by SunJae on 2017-02-09.
  */
 
-
 public class DetailSetFragment extends Fragment implements SetActivity.ResetFragmentListener {
     private final int WIFI_STATE = 0;
     private final int BLUETOOTH_STATE = 1;
@@ -44,6 +45,7 @@ public class DetailSetFragment extends Fragment implements SetActivity.ResetFrag
     private final int BRIGHT_STATE = 3;
     private final int BRIGHT_DIV = 100;
     private boolean vibrate = false;
+    private ImageView callback;
     private boolean[] settingstate = new boolean[4];
     private WifiData data;
     private WifiAudioManager wifiAudioManager;
@@ -182,7 +184,7 @@ public class DetailSetFragment extends Fragment implements SetActivity.ResetFrag
         if (brightCheck) {
             sw_bright.setChecked(brightCheck);
             sb_bright.setProgress(state.getBrightSize());
-            tv_bright_state_value.setText(((float) (state.getBrightSize()) / 250) * 100 + "%");
+            tv_bright_state_value.setText((int)(((float) (state.getBrightSize()) / 250) * 100) + "%");
         }
     }
 
@@ -203,9 +205,13 @@ public class DetailSetFragment extends Fragment implements SetActivity.ResetFrag
             cb_sound_vibrate.setChecked(false);
             wifiAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
         }
-        //TODO 변경 될 때마다 소리 알람
+
         wifiAudioManager.setSystemVolume(progress);
-        tv_sound_state_value.setText(progress+"");
+        if(progress == 0)
+            tv_sound_state_value.setText(getString(R.string.detail_Sound_Mute));
+        else
+            tv_sound_state_value.setText(progress+"");
+
     }
 
     private void setChangeBright(SeekBar seekBar, int progress){
@@ -263,9 +269,8 @@ public class DetailSetFragment extends Fragment implements SetActivity.ResetFrag
             if(isChecked) {
                 SLog.d("진동 Check");
                 wifiAudioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
-                sb_sound.setProgress(0);
-                cb_sound_vibrate.setChecked(true);
-                tv_sound_state_value.setText("진동");
+               // cb_sound_vibrate.setChecked(true);
+                tv_sound_state_value.setText(getString(R.string.detail_Sound_Vibrate));
             }
         }
     };
@@ -304,7 +309,15 @@ public class DetailSetFragment extends Fragment implements SetActivity.ResetFrag
         }
     }
 
-
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            callback = (ImageView) activity.findViewById(R.id.iv_toolbar);
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString());
+        }
+    }
 
     @Override
     public void onResume(){
@@ -314,5 +327,6 @@ public class DetailSetFragment extends Fragment implements SetActivity.ResetFrag
     @Override
     public void onDestroy(){
         super.onDestroy();
+        callback.setVisibility(View.INVISIBLE);
     }
 }

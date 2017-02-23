@@ -2,7 +2,6 @@ package com.nammu.smartwifi.service;
 
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -11,7 +10,6 @@ import android.net.wifi.WifiManager;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 
 import com.nammu.smartwifi.model.OnInterface;
@@ -175,6 +173,8 @@ public class SystemService extends Service implements ServiceEvent.changeNotific
     private void delay(){
         SLog.d("dealy" + saveTime * 2);
         saveTime *= DELAY_ADD;
+        if(saveTime == DELAY_MAX*2)
+            saveTime = 1;
         if(saveTime > DELAY_MAX)
             saveTime = DELAY_MAX;
     }
