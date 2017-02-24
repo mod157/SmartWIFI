@@ -53,6 +53,7 @@ public class SetFragment extends Fragment {
     private Context set_Context;
     private ProgressDialog progressDialog;
     private boolean threadState = true;
+    private WifiScan wifiScan;
     @BindView(R.id.et_add_name)
     EditText et_add_name;
     @BindView(R.id.tv_add_WifiSelectName)
@@ -150,7 +151,7 @@ public class SetFragment extends Fragment {
     private void initWifiScan(){
         wm = (WifiManager) getContext().getSystemService(Context.WIFI_SERVICE);
         wifi_state = wm.isWifiEnabled();
-        WifiScan wifiScan = new WifiScan(getContext(),wm, wifiScanResultInterface);
+        wifiScan = new WifiScan(getContext(),wm, wifiScanResultInterface);
         configNetworkList = wifiScan.configScan();
         wifiScan.Scan();
     }
@@ -276,7 +277,7 @@ public class SetFragment extends Fragment {
             return false;
         }catch(NullPointerException e){
             SLog.d(""+e.toString());
-            checkingSaveWifi(this.configNetworkList, scanSSID);
+            configNetworkList = wifiScan.configScan();
             return false;
         }
     }

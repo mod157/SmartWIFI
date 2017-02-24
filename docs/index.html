@@ -28,7 +28,10 @@
     <link href="css/new-age.min.css" rel="stylesheet">
     <style>
     		#back{ position:relative;-webkit-background-size:cover;width:1500px; height:600px; background-image:url(img/back.jpg); }
-
+        .video-container { margin: 0;padding-bottom: 75%; max-width: 100%; height: 0; position: relative;overflow: hidden;}
+        .video-container iframe,
+        .video-container object,
+        .video-container embed { margin: 0;padding: 0; width: 100%; height: 95%;position: absolute; top: 0;left: 0; }
     </style>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -61,7 +64,7 @@
                         <a class="page-scroll" href="#features">파이캐치란?</a>
                     </li>
                     <li>
-                        <a class="page-scroll" href="#contact">Contact</a>
+                        <a class="page-scroll" href="#contact">사용영상</a>
                     </li>
                 </ul>
             </div>
@@ -118,7 +121,6 @@
                     </div>
                 </div>
             </div>
-        </div>
     </header>
 <!--
     <section id="download" class="download bg-primary text-center">
@@ -146,30 +148,21 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-8">
-                    <div class="row">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="feature-item">
-                                    <br><br><br><br><br>
-                                    <img src="img/wifi.png"/>
-                                    <h3>WIFI 연결/해제</h3>
-                                    <p class="text-muted">원하는 WIFI를 선택하고 연결 여부를 선택 할 수 있습니다.</p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="feature-item">
-                                    <br><br><br><br><br>
-                                    <img src="img/bluetooth.png"/>
-                                    <h3>블루투스 연결/해제</h3>
-                                    <p class="text-muted">블루투스 연결/해제 설정을 할 수 있습니다.</p>
-                                </div>
-                            </div>
-                        </div>
-                      </div>
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="section-heading">
+                          <p>
+                            영화관에서 지켜야할 에티켓
+                            , 도서관에서 지켜야할 에티켓 <br />
+                            집에 들어가자마자 WIFI를 눌러야하고 블루투스를 끄고 너무도 많은 작업을 해야해요.<br />
+                            쉽고 편하게 할 순 없을까?
+                          </p>
                     </div>
-                  </div>
+                </div>
+            </div>
+            <iframe width="1000" height="600" src="https://www.youtube.com/embed/XjVPmzPKsIo" frameborder="0" allowfullscreen>
 
+            </iframe>
     </section>
 
     <section id="features" class="features">
@@ -178,15 +171,31 @@
                 <div class="col-lg-12 text-center">
                     <div class="section-heading">
                         <h2>파이캐치 소개</h2>
-
                         <div class="section-heading">
                               <p class="text-muted">어떻게 이용하는가?</p>
                             <hr>
                         </div>
-
                 </div>
             </div>
-
+            <div class="col-md-6">
+                <div class="feature-item">
+                    <br><br><br><br><br>
+                    <h2>1</h2>
+                    <h3>WIFI를 자동으로 연결</h3>
+                    <p class="text-muted">WIFI를 한번 설정하면 자동으로 주변 WIFI를 스캔하여<br />
+                    주변 리스트에서 원하는 WIFI를 캐치하여 원하는 설정으로<br /> 변경해 줍니다.</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="feature-item">
+                    <br><br><br><br><br>
+                    <h2>2</h2>
+                    <h3>여러 설정 변경</h3>
+                    <p class="text-muted">WIFI를 이용하여 위치를 탐색하고, 그 위치에 따라 원하는 설정을<br /> 만들어
+                    자동으로 WIFI설정과 함께 변경합니다.</p>
+                </div>
+            </div>
+        </div>
 
             <div class="row">
                 <div class="col-md-4">
@@ -245,6 +254,7 @@
                 </div>
             </div>
           </div>
+        </div>
     </section>
 
     <section id="pick" class="features">
@@ -306,18 +316,33 @@
 
         <section id="contact" class="contact bg-sun">
             <div class="container">
+              <div class="row">
+
+
               <div class="col-lg-12 text-center">
+
                   <div class="section-heading">
-                      <h2>
-                        이용 영상</h2>
-                      <hr>
+                      <h2><span style="color:white">사용 영상1</span></h2>
+                        <p><span style="color:white">쉽게 알아보자!</span>
+                          </p>
                   </div>
               </div>
-                  <iframe id="gangnamStyleIframe" width="100%" height="600px"
-                   src="https://www.youtube.com/embed/9bZkp7q19f0?rel=0&enablejsapi=1"
-                    frameborder="0"
-                     allowfullscreen>
-                   </iframe>
+                  </div>
+                <iframe width="800" height="600" src="https://www.youtube.com/embed/goAuXtpzhDM" frameborder="0" allowfullscreen></iframe>
+              <br  /><br /><br />  <br  /><br /><br />
+                <div class="row">
+
+
+                <div class="col-lg-12 text-center">
+
+                    <div class="section-heading">
+                        <h2><span style="color:white">사용 영상2</span></h2>
+                          <p><span style="color:white">자세하게 알아보자!</span>
+                            </p>
+                    </div>
+                </div>
+                <iframe width="800" height="600" src="https://www.youtube.com/embed/D_lr-OIYH3I" frameborder="0" allowfullscreen></iframe>
+                    </div>
                  </div>
         </section>
 

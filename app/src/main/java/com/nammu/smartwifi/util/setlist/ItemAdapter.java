@@ -16,6 +16,7 @@ import com.nammu.smartwifi.R;
 import com.nammu.smartwifi.model.SLog;
 import com.nammu.smartwifi.realmdb.RealmDB;
 import com.nammu.smartwifi.realmdb.realmobject.WifiData;
+import com.nammu.smartwifi.service.SystemBindService;
 import com.nammu.smartwifi.util.setdata.SetActivity;
 
 import java.util.ArrayList;
@@ -114,6 +115,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
             itemList.remove(position);
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, itemList.size());
+            Intent bindIntent = new Intent(context, SystemBindService.class);
+            bindIntent.setAction("resetConnection");
+            context.startService(bindIntent);
+
         }
 
         @OnClick(R.id.linear_item)
