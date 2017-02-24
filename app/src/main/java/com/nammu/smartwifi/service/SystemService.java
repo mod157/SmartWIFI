@@ -40,7 +40,7 @@ import io.realm.RealmResults;
 public class SystemService extends Service implements ServiceEvent.changeNotificationEventListener {
     private final int DELAY_MAX = 20; // 5분
     private final int DELAY_ADD = 2;
-    private final int SCAN_TIME = 15000;
+    private final int SCAN_TIME = 20000;
     private final int INIT_SAVETIME = 1;
     private WifiAudioManager wifiAudioManager;
     private WifiNotificationManager wifiNotificationManager;
@@ -98,23 +98,23 @@ public class SystemService extends Service implements ServiceEvent.changeNotific
    public OnInterface.WifiScanResultInterface wifiScanResultInterface = new OnInterface.WifiScanResultInterface() {
        @Override
        public void setScanResult(List<ScanResult> list) {
+            SLog.d("WIFiInterface");
             searchWifiList(list);
        }
    };
 
     public void searchWifiList(List<ScanResult> scanList) {
-        if(scanList !=null) {
+        SLog.d("search : " + scanList.size());
+        if(scanList !=null && scanList.size() != 0) {
             wifiScan.sortLevelResult(scanList);
             results = new ArrayList<>();
             scanListEqualBSSID(scanList, results);
             HashSet<WifiData> hashSet = new HashSet<>(results);
             results = new ArrayList<>(hashSet);
+            SLog.d("scanList not null : " + results.size());
             if(results.size() != 0) {
+                SLog.d("result size not zero");
                 sortPripority(results);
-                for(int i = 0 ; i < results.size(); i++) {
-                    WifiData wifiData = results.get(i);
-                    SLog.d(wifiData.getSSID() + " : " + wifiData.getPripority());
-                }
                 for (int i = 0; i < results.size(); i++) {
                     WifiData item = results.get(i);
 
@@ -172,7 +172,7 @@ public class SystemService extends Service implements ServiceEvent.changeNotific
 
     private void delay(){
         SLog.d("dealy" + saveTime * 2);
-        saveTime *= DELAY_ADD;
+        //saveTime *= DELAY_ADD;
         if(saveTime == DELAY_MAX*2)
             saveTime = 1;
         if(saveTime > DELAY_MAX)

@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         VIEW_EDIT = false;
         deleteMode = false;
         startActivity(intent);
+
     }
 
     @Override
@@ -64,9 +65,13 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent("SmartWIFI.SystemService");
             intent.setPackage("com.nammu.smartwifi");
             startService(intent);
-        }else{
+        } else {
             SLog.d("Service는 이미 실행 중 입니다.");
         }
+       // serviceCheckingStart();
+    }
+    public void serviceCheckingStart() {
+
     }
 
     //TODO 삭제
@@ -112,4 +117,5 @@ public class MainActivity extends AppCompatActivity {
             android.os.Process.killProcess(android.os.Process.myPid());
         }
     }
+
 }

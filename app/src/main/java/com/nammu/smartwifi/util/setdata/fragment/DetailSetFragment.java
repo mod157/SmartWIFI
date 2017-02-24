@@ -155,6 +155,7 @@ public class DetailSetFragment extends Fragment implements SetActivity.ResetFrag
         state.setSoundState(true);
         state.setBrightState(true);
         state.setSoundSize(wifiAudioManager.getRingerModeInt());
+        SLog.d(wifiAudioManager.getRingerModeInt()+"");
         state.setBrightSize(wifiBrightManager.getBrightSize());
         initialSetView(state);
     }

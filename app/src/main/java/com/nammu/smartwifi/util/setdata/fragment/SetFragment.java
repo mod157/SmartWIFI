@@ -46,13 +46,13 @@ public class SetFragment extends Fragment {
     private String bssid = "";
     private WifiListDialog listDialog;
     private WifiData data = new WifiData();
-    OnChangedListener mCallback;
+    private OnChangedListener mCallback;
     private WifiManager wm;
     private List<WifiConfiguration> configNetworkList;
     private boolean wifi_state;
-    Context set_Context;
+    private Context set_Context;
     private ProgressDialog progressDialog;
-
+    private boolean threadState = true;
     @BindView(R.id.et_add_name)
     EditText et_add_name;
     @BindView(R.id.tv_add_WifiSelectName)
@@ -72,7 +72,7 @@ public class SetFragment extends Fragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while(true){
+                while(threadState){
                     SLog.d("list DIalog is state : " + (listDialog != null));
                     if(listDialog != null && configNetworkList != null) {
                         handler.sendEmptyMessage(0);
@@ -308,6 +308,7 @@ public class SetFragment extends Fragment {
     public void onDestroy(){
         super.onDestroy();
         SLog.d("destroy");
+        threadState = false;
     }
 
     //SetFragment -> SetActivity로 전달하여 Detail 실행

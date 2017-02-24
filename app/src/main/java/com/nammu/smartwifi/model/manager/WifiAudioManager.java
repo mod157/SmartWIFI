@@ -40,10 +40,10 @@ public class WifiAudioManager {
         int modeInt = 0;
         switch(wifiAudioManager.getRingerMode()) {
             //무음
-            case AudioManager.RINGER_MODE_SILENT: modeInt = 0;
+            case AudioManager.RINGER_MODE_SILENT: modeInt = 0;break;
             //진동
-            case AudioManager.RINGER_MODE_VIBRATE:modeInt = -1;
-            case  AudioManager.RINGER_MODE_NORMAL:modeInt = getSystemVolume();
+            case AudioManager.RINGER_MODE_VIBRATE:modeInt = -1;break;
+            case  AudioManager.RINGER_MODE_NORMAL:modeInt = getSystemVolume();break;
         }
         return modeInt;
     }

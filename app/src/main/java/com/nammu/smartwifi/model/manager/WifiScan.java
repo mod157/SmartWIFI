@@ -66,6 +66,7 @@ public class WifiScan {
         wifi_state = wm.isWifiEnabled();
         if (wifi_state) {
             // 켜져 있는 상태면 바로 스캔
+            SLog.d("true");
             wm.startScan();
         } else {
             // 현재 wifi가 꺼져 있으면
@@ -73,8 +74,10 @@ public class WifiScan {
             if (Build.VERSION.SDK_INT >= 18 && wm.isScanAlwaysAvailable()) {
                 //  4.3 버전 이상인지 체크한다.
                 //  항상검색 허용 설정이 활성화상태인지 체크한다.
+                SLog.d("false, true");
                 wm.startScan();  // 바로 스캔 실행
             } else {
+                SLog.d("false, false");
                 //나머지는 Wifi를 잠시 켜서 확인한다.
                 wm.setWifiEnabled(true);
                 wm.startScan();
@@ -94,6 +97,7 @@ public class WifiScan {
                 SLog.d("BroadCast");
                 if(!wifi_state)
                     wm.setWifiEnabled(false);
+
                 scanResultInterface.setScanResult(wm.getScanResults());
                 context.unregisterReceiver(wifiR);
             }
