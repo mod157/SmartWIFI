@@ -27,7 +27,7 @@
     <!-- Theme CSS -->
     <link href="css/new-age.min.css" rel="stylesheet">
     <style>
-    		#back{ width:1300px; height:600px; background-image:url(img/menu_back.jpg); }
+    		#back{ position:relative;-webkit-background-size:cover;width:1500px; height:600px; background-image:url(img/back.jpg); }
     </style>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -70,29 +70,31 @@
     </nav>
 
     <header>
-        <div class="container">
+        <div id="main" class="container">
             <div class="row">
                 <div class="col-sm-7">
                     <div class="header-content">
                         <div class="header-content-inner">
                             <h1>
                               <!--img src="img/demo-screen-1.jpg" class="img-responsive" alt="">
--->                           파이 캐치
-                              (FI Catch)
-                              <BR><BR></h1>
+-->                          <strong> 파이 캐치
+                              (FI Catch)</strong>
+                              <br><br></h1>
                                 <h2>
                               WIFI 연결을 까먹고 <strong>데이터</strong>를 사용
-                              <BR>
+                              <br>
                                도서관에서 울리는 휴대폰 <strong>벨소리</strong>
                                <br>
-                              <BR>
+                              <br>
 
                               <strong>
+                                내가 원하는 곳에서<br />
                                 단 한번의 설정으로 편하게 연결하고 변경하자!
 
                               </strong>
                               <br>
-                              <br>
+                              <br><br><br>
+                              <img src="img/google-play-badge.svg" width="300px" height="100px" />
                             </h2>
                         </div>
                     </div>
@@ -135,6 +137,9 @@
                 <div class="col-lg-12 text-center">
                     <div class="section-heading">
                         <h2>기획 의도</h2>
+                          <p>
+                            왜 필요한걸까?
+                          </p>
                         <hr>
                     </div>
                 </div>
@@ -156,6 +161,9 @@
                           <hr>
                       </div>
                 </div>
+              </div>
+            </div>
+          </div>
     </section>
 
     <section id="features" class="features">
@@ -165,10 +173,12 @@
                     <div class="section-heading">
                         <h2>파이캐치 소개</h2>
                         <p class="text-muted">어떻게 이용하는가?</p>
-                        <hr>
+
                     </div>
                 </div>
             </div>
+
+
             <div class="row">
                 <div class="col-md-4">
                     <div class="device-container">
@@ -225,14 +235,16 @@
                     </div>
                 </div>
             </div>
+          </div>
     </section>
 
-    <section id="back" class="download bg-primary text-center">
+    <section id="pick" class="features">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-12 text-center">
                         <div class="section-heading">
-                            <h2>메인 화면</h2>
+                            <h2>화면 구성</h2>
+                              <p class="text-muted">쉽게 추가하고 변경하자</p>
                             <hr>
                         </div>
                     </div>
@@ -244,7 +256,7 @@
                                 <div class="device">
                                     <div class="screen">
                                         <!-- Demo image for screen mockup, you can put an image here, some HTML, an animation, video, or anything else! -->
-                                        <img src="img/demo-screen-1.jpg" class="img-responsive" alt=""> </div>
+                                        <img src="img/phone/phone-main.png" class="img-responsive" alt=""> </div>
                                     <div class="button">
 
                                     </div>
@@ -252,29 +264,65 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-4">
+                        <div class="device-container">
+                            <div class="device-mockup iphone6_plus portrait white">
+                                <div class="device">
+                                    <div class="screen">
+                                        <!-- Demo image for screen mockup, you can put an image here, some HTML, an animation, video, or anything else! -->
+                                        <img src="img/phone/phone-add-1.png" class="img-responsive" alt=""> </div>
+                                    <div class="button">
 
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="device-container">
+                            <div class="device-mockup iphone6_plus portrait white">
+                                <div class="device">
+                                    <div class="screen">
+                                        <!-- Demo image for screen mockup, you can put an image here, some HTML, an animation, video, or anything else! -->
+                                        <img src="img/phone/phone-add-2.png" class="img-responsive" alt=""> </div>
+                                    <div class="button">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
               </div>
         </section>
+        <section id="contact" class="contact bg-sun">
+            <div class="container">
+              <div class="col-lg-12 text-center">
+                  <div class="section-heading">
+                      <h2>
+                        이용 영상</h2>
+                      <hr>
+                  </div>
+              </div>
+                  <iframe id="gangnamStyleIframe" width="100%" height="600px"
+                   src="https://www.youtube.com/embed/9bZkp7q19f0?rel=0&enablejsapi=1"
+                    frameborder="0"
+                     allowfullscreen>
+                   </iframe>
+                 </div>
+        </section>
 
-
-    <iframe id="gangnamStyleIframe" width="100%" height="100%"
-     src="https://www.youtube.com/embed/9bZkp7q19f0?rel=0&enablejsapi=1"
-      frameborder="0"
-       allowfullscreen>
-     </iframe>
     <section class="cta">
-
         <div class="cta-content">
             <div class="container">
-                <h2>Stop waiting.<br>Start building.</h2>
-                <a href="#contact" class="btn btn-outline btn-xl page-scroll">Let's Get Started!</a>
+                <h2>단 한번 설정<br>자동으로<br>쉽고 간편히<br>변경하자.</h2>
+                <a href="#main" class="btn btn-outline btn-xl page-scroll">Let's Get Started!</a>
             </div>
         </div>
         <div class="overlay"></div>
     </section>
 
 
-    <section id="contact" class="contact bg-primary">
+  <!--  <section id="contact" class="contact bg-primary">
         <div class="container">
             <h2>We <i class="fa fa-heart"></i> new friends!</h2>
             <ul class="list-inline list-social">
@@ -289,21 +337,11 @@
                 </li>
             </ul>
         </div>
-    </section>
+    </section>-->
   <footer>
         <div class="container">
-            <p>&copy; 2016 Start Bootstrap. All Rights Reserved.</p>
-            <ul class="list-inline">
-                <li>
-                    <a href="#">Privacy</a>
-                </li>
-                <li>
-                    <a href="#">Terms</a>
-                </li>
-                <li>
-                    <a href="#">FAQ</a>
-                </li>
-            </ul>
+            <p>&copy; 2017 BoostCamp Android Nammu(FI Catch)</p>
+
         </div>
     </footer>
 
