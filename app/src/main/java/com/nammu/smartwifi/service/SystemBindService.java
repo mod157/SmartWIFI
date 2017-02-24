@@ -1,18 +1,13 @@
 package com.nammu.smartwifi.service;
 
 import android.app.IntentService;
-import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.os.Binder;
 import android.os.IBinder;
-import android.renderscript.ScriptGroup;
 import android.support.annotation.Nullable;
-import android.widget.Toast;
 
-import com.nammu.smartwifi.R;
 import com.nammu.smartwifi.model.SLog;
 
 /**
@@ -40,6 +35,9 @@ public class SystemBindService extends IntentService {
                     break;
                 case "changeConnection":
                     boundService.onChangeConnection();
+                    break;
+                case "resetConnection":
+                    boundService.onReStart();
                     break;
             }
         }
