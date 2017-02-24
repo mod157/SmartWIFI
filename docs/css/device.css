@@ -1,3 +1,21 @@
+Skip to content
+This repository
+Search
+Pull requests
+Issues
+Gist
+ @mod157
+ Sign out
+ Watch 13
+  Star 175
+  Fork 262 BlackrockDigital/startbootstrap-new-age
+ Code  Issues 3  Pull requests 5  Projects 0  Wiki  Pulse  Graphs
+Branch: master Find file Copy pathstartbootstrap-new-age/vendor/device-mockups/device-mockups.css
+ad702d0  on 30 Aug 2016
+@davidtmiller davidtmiller initial commit
+1 contributor
+RawBlameHistory     
+Executable File  773 lines (616 sloc)  20 KB
 /*
  *	HTML5 Device Mockups
  *
@@ -592,7 +610,7 @@
 .device-mockup.galaxy_s3 > .device,
 .device-mockup.galaxy_s3.black > .device,
 .device-mockup.galaxy_s3.portrait.black > .device {
-	background-image: url("nexus_6/nexus_6_port.png");
+	background-image: url("galaxy_s3/s3_port_black.png");
 }
 
 .device-mockup.galaxy_s3.landscape > .device,
@@ -602,7 +620,7 @@
 
 .device-mockup.galaxy_s3.white > .device,
 .device-mockup.galaxy_s3.portrait.white > .device {
-	background-image: url("nexus_6/nexus_6_port.png");
+	background-image: url("galaxy_s3/s3_port_white.png");
 }
 
 .device-mockup.galaxy_s3.landscape.white > .device {
@@ -611,7 +629,7 @@
 
 .device-mockup.galaxy_s3 > .device > .screen,
 .device-mockup.galaxy_s3.portrait > .device > .screen {
-	top: 8.2%; bottom: 10.1%; left: 6.3%; right: 6.4%;
+	top: 12.3728814%; bottom: 15.5367232%; left: 13.8383838%; right: 13.8383838%;
 }
 
 .device-mockup.galaxy_s3.landscape > .device > .screen {
@@ -642,7 +660,7 @@
 
 .device-mockup.galaxy_s5.white > .device,
 .device-mockup.galaxy_s5.portrait.white > .device {
-  background-image: url("galaxy_s5/galaxy_s5_port_white.png");
+  background-image: url("img/nexus_6_port.png");
 }
 
 .device-mockup.galaxy_s5.landscape.white > .device {
@@ -770,3 +788,5 @@
 .device-mockup.samsung_tv.landscape > .device > .screen {
     top: 2.148803%; bottom: 12.817127%; left: 1.261956%; right: 1.361956%;
 }
+Contact GitHub API Training Shop Blog About
+¨Ï 2017 GitHub, Inc. Terms Privacy Security Status Help
