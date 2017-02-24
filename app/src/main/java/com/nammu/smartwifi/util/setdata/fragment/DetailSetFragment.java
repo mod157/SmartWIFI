@@ -25,7 +25,6 @@ import com.nammu.smartwifi.model.manager.WifiBrightManager;
 import com.nammu.smartwifi.realmdb.RealmDB;
 import com.nammu.smartwifi.realmdb.realmobject.WifiData;
 import com.nammu.smartwifi.realmdb.realmobject.WifiDataState;
-import com.nammu.smartwifi.service.SystemBindService;
 import com.nammu.smartwifi.util.setdata.SetActivity;
 import com.nammu.smartwifi.util.setlist.MainActivity;
 
@@ -90,9 +89,6 @@ public class DetailSetFragment extends Fragment implements SetActivity.ResetFrag
         RealmDB.insertOrUpdate_Data_State(getContext(), dataState);
         //오디오 초기화
         wifiAudioManager.setSystemVolume(init_system_Sound);
-        Intent bindIntent = new Intent(getContext(), SystemBindService.class);
-        bindIntent.setAction("resetConnection");
-        getContext().startService(bindIntent);
 
         Intent intent = new Intent(getContext(), MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);

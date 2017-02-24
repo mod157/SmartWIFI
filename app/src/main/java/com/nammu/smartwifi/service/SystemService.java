@@ -154,10 +154,9 @@ public class SystemService extends Service implements ServiceEvent.changeNotific
         WifiData item = results.get(resultsItemNumber);
         lastSSID = item.getSSID();
         WifiDataState data_state = realm.where(WifiDataState.class).equalTo("BSSID",item.getBSSID()).findFirst();
-        setNotification(item.getSSID(), results );
         setSetting(data_state, item.getSSID());
 
-
+        setNotification(item.getSSID(), results );
         saveTime = 1;
     }
 
@@ -173,7 +172,7 @@ public class SystemService extends Service implements ServiceEvent.changeNotific
 
     private void delay(){
         SLog.d("dealy" + saveTime * 2);
-        saveTime *= DELAY_ADD;
+        //saveTime *= DELAY_ADD;
         if(saveTime == DELAY_MAX*2)
             saveTime = 1;
         if(saveTime > DELAY_MAX)
@@ -197,7 +196,6 @@ public class SystemService extends Service implements ServiceEvent.changeNotific
         lastSSID = ssid;
         SLog.d("SetSetting : " + data_state.getWifiState() + " : " +  data_state.getBluetoothState() +" : "+ data_state.getSoundState() + " : " + data_state.getBrightState());
         if(data_state.getWifiState()){
-            wifiScan.wifiState(true);
             wifiScan.wifiConnetion(ssid);
         }else{
             wifiScan.wifiState(false);
@@ -270,12 +268,6 @@ public class SystemService extends Service implements ServiceEvent.changeNotific
         SLog.d("Thread start");
     }
 
-    public void onReStart(){
-        flag = false;
-        saveTime = INIT_SAVETIME;
-        resultsItemNumber = 0;
-        scanHandler.postDelayed(serviceThread,0);
-    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
