@@ -109,10 +109,9 @@ public class WifiScan {
     //TODO 대기시간 Callback
     public void wifiConnetion(String ssid){
         SLog.d("WifiConnection");
-
+        wm.setWifiEnabled(true);
+        List<WifiConfiguration> list = wm.getConfiguredNetworks();
         try {
-            wm.setWifiEnabled(true);
-            List<WifiConfiguration> list = wm.getConfiguredNetworks();
             if (list.isEmpty()) {
                 Log.v("Error", "list가 빔");
             }
@@ -126,7 +125,6 @@ public class WifiScan {
                 }
             }
         }catch(Exception e){
-            SLog.d("connection error");
             wifiConnetion(ssid);
         }
     }

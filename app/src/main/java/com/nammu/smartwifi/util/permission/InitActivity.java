@@ -22,7 +22,7 @@ public class InitActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_init);
-       // permissionCheck();
+        permissionCheck();
     }
 
     @Override
