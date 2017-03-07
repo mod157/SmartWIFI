@@ -12,6 +12,7 @@ import android.util.Log;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 import com.nammu.smartwifi.R;
+import com.nammu.smartwifi.model.SLog;
 import com.nammu.smartwifi.util.setlist.MainActivity;
 
 import java.util.ArrayList;
@@ -23,11 +24,13 @@ public class InitActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_init);
        // permissionCheck();
+        SLog.e("Permission Create");
     }
 
     @Override
     public void onStart(){
         super.onStart();
+        SLog.e("Permission Start");
         permissionCheck();
     }
 

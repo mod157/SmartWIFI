@@ -63,6 +63,6 @@ public class SystemBindService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         eventIntent = intent;
         SLog.d("HandelrIntent");
-        bindService(new Intent(this, SystemService.class), mConnection, Context.BIND_AUTO_CREATE);
+        getApplicationContext().bindService(new Intent(this, SystemService.class), mConnection, Context.BIND_AUTO_CREATE);
     }
 }

@@ -35,7 +35,7 @@
     <string name="dialog_delete">설정 삭제</string>
 
     <string name="dialog_wifilist">리스트</string>
-    <string anme="dialog_wifiSaveOK">저장</string>
+    <string name="dialog_wifiSaveOK">저장</string>
 
     <!-- noti -->
     <string name="noti_wifiChange">변경</string>
