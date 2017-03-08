@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.nammu.smartwifi">
+    package="com.nammu.ficatch">
 
     <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
     <uses-permission android:name="android.permission.BLUETOOTH" />
@@ -15,31 +15,31 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
-        android:name=".SmartWifiAplication"
+        android:name="com.nammu.ficatch.SmartWifiAplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".util.setlist.MainActivity">
+        <activity android:name="com.nammu.ficatch.util.setlist.MainActivity">
 
         </activity>
-        <activity android:name=".util.permission.InitActivity">
+        <activity android:name="com.nammu.ficatch.util.permission.InitActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".util.setdata.SetActivity"
+        <activity android:name="com.nammu.ficatch.util.setdata.SetActivity"
             android:screenOrientation="portrait" />
-        <service android:name=".service.SystemService">
+        <service android:name="com.nammu.ficatch.service.SystemService">
         <intent-filter>
             <action android:name="SmartWIFI.SystemService"/>
             <category android:name="android.intent.category.DEFAULT"/>
         </intent-filter>
         </service>
-        <service android:name=".service.SystemBindService"/>
-        <receiver android:name=".broadcast.broadCastReceiver"
+        <service android:name="com.nammu.ficatch.service.SystemBindService"/>
+        <receiver android:name="com.nammu.ficatch.broadcast.broadCastReceiver"
             android:enabled="true"
             android:exported="false"
             android:label="STARTReceiver">
