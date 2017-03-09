@@ -11,6 +11,7 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.widget.Toast;
 
 import com.nammu.ficatch.model.OnInterface;
 import com.nammu.ficatch.model.SLog;
@@ -104,42 +105,45 @@ public class SystemService extends Service implements ServiceEvent.changeNotific
    };
 
     public void searchWifiList(List<ScanResult> scanList) {
-        SLog.d("search : " + scanList.size());
-        if(scanList !=null && scanList.size() != 0) {
-            wifiScan.sortLevelResult(scanList);
-            results = new ArrayList<>();
-            scanListEqualBSSID(scanList, results);
-            HashSet<WifiData> hashSet = new HashSet<>(results);
-            results = new ArrayList<>(hashSet);
-            SLog.d("scanList not null : " + results.size());
-            if(results.size() != 0) {
-                SLog.d("result size not zero");
-                sortPripority(results);
-                for (int i = 0; i < results.size(); i++) {
-                    WifiData item = results.get(i);
+        try {
+            if (scanList != null && scanList.size() != 0) {
+                wifiScan.sortLevelResult(scanList);
+                results = new ArrayList<>();
+                scanListEqualBSSID(scanList, results);
+                HashSet<WifiData> hashSet = new HashSet<>(results);
+                results = new ArrayList<>(hashSet);
+                SLog.d("scanList not null : " + results.size());
+                if (results.size() != 0) {
+                    SLog.d("result size not zero");
+                    sortPripority(results);
+                    for (int i = 0; i < results.size(); i++) {
+                        WifiData item = results.get(i);
 
-                    SLog.d(lastSSID + " : " + results.get(i+resultsItemNumber).getSSID());
-                    if(lastSSID.equals(results.get(i+resultsItemNumber).getSSID()) && flag){
-                        SLog.d("이미 연결됨 " + wm.getConnectionInfo().getSSID() + " : " + item.getSSID());
-                        delay();
+                        SLog.d(lastSSID + " : " + results.get(i + resultsItemNumber).getSSID());
+                        if (lastSSID.equals(results.get(i + resultsItemNumber).getSSID()) && flag) {
+                            SLog.d("이미 연결됨 " + wm.getConnectionInfo().getSSID() + " : " + item.getSSID());
+                            delay();
+                            return;
+                        }
+
+                        //초기화 작업
+                        if (!flag)
+                            resetDataInit();
+                        addItemWifiConnection(results);
                         return;
                     }
-
-                    //초기화 작업
-                    if (!flag)
-                        resetDataInit();
-                    addItemWifiConnection(results);
-                    return;
+                }
+                //1당 15초 딜레이 2배씩 증가
+                delay();
+                if (flag) {
+                    SLog.d("주변에 와이파이가 없음");
+                    setSetting(initData, lastSSID);
+                    wifiNotificationManager.notification("없음", "");
+                    flag = false;
                 }
             }
-            //1당 15초 딜레이 2배씩 증가
-            delay();
-            if(flag) {
-                SLog.d("주변에 와이파이가 없음");
-                setSetting(initData, lastSSID);
-                wifiNotificationManager.notification("없음","");
-                flag = false;
-            }
+        }catch(NullPointerException e){
+            wifiNotificationManager.notification("오류", "주변 Wifi 정보를 얻을 수 없습니다.");
         }
     }
 
